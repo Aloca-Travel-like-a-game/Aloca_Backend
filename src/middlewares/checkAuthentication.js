@@ -12,9 +12,10 @@ const checkAuthentication = async (req, res, next) => {
 
         const user = await User.findById(decoded.userId);
 
-        if (!user) {
+        if (!user || user.isActive !== "active") {
             return res.status(401).send("User not found");
         }
+
         req.userData = user;
         console.log("Token are still valid");
         next()

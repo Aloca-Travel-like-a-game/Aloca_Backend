@@ -30,12 +30,16 @@ const UserSchema = mongoose.Schema({
     password: {
         type: String,
         required: [true, "Password is required field!"],
-        lowercase: true
     },
-    isActice: { type: String, default: "active" },
+    code: String,
+    isActive: { type: String, default: "notActive" },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
-    resetToken: String,
+    role: {
+        type: String,
+        default: "user"
+    },
+    refreshToken: String,
 })
 
 const User = mongoose.model("User", UserSchema);

@@ -1,17 +1,16 @@
-import { TokenExpiredError } from 'jsonwebtoken';
-
-const jwt = TokenExpiredError;
+import jwt from "jsonwebtoken";
+import { configDotenv } from "dotenv";
+configDotenv();
 
 const generateAccessToken = (user) => {
-    return token = jwt.sign({
+    return jwt.sign({
         userId: user._id
     }, process.env.ACCESS_TOKEN_SECRET, {
         expiresIn: "3h"
     });
-
 }
 const generateRefreshToken = (user) => {
-    return refreshtoken = jwt.sign({
+    return jwt.sign({
         userId: user._id
     }, process.env.REFRESH_TOKEN_SECRET, {
         expiresIn: "30d"
@@ -20,7 +19,7 @@ const generateRefreshToken = (user) => {
 }
 
 const verifyAccessToken = (access_token) => {
-    token = access_token
+    let token = access_token
     try {
 
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
@@ -51,7 +50,7 @@ const verifyRefreshToken = (refresh_token) => {
     }
 }
 
-export default {
+export {
     verifyAccessToken,
     verifyRefreshToken,
     generateAccessToken,
