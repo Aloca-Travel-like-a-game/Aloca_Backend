@@ -133,6 +133,12 @@ const forgotPassword = async (req, res) => {
         if (!checkUser) {
             return res.status(401).json({ message: "The email is not exist" });
         }
+        if (checkUser.isActive == "notActive") {
+
+        }
+        else if (checkUser.isActive == "delete") {
+
+        }
         const verificationCode = generateVerificationCode();
         sendVerificationCodeEmail(email, verificationCode);
         await User.updateOne({
@@ -169,11 +175,23 @@ const resetPassword = async (req, res) => {
     }
 }
 
+const refreshToken = async (req, res) => {
+    try {
+        const { token } = req.params;
+        if(!refreshToken);
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Internal Servel Error" });
+    }
+}
+
 export {
     register,
     confirmAccount,
     refreshVerificationCode,
     login,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    refreshToken
 }

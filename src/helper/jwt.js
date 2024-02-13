@@ -19,14 +19,12 @@ const generateRefreshToken = (user) => {
 }
 
 const verifyAccessToken = (access_token) => {
-    let token = access_token
     try {
-
-        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        const decoded = jwt.verify(access_token, process.env.ACCESS_TOKEN_SECRET);
         return decoded;
     } catch (err) {
         if (err instanceof TokenExpiredError) {
-            const decoded = jwt.decode(token);
+            const decoded = jwt.decode(access_token);
             return {
                 exp: decoded.exp,
                 userId: decoded.userId
