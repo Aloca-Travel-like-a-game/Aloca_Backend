@@ -1,15 +1,20 @@
+import User from "../models/userModel.js";
+import { verifyAccessToken } from "../helper/jwt.js";
+import checkRefreshToken from "./checkRefreshToken.js";
 const checkAuthentication = async (req, res, next) => {
     try {
-        const token = req.headers.cookie;
-        const cookies = cookie.parse(token || '');
-        const accessToken = cookies.accesstoken;
-
+        const token = req.headers.authorization;
+        const tokenArray = token.split(' ');
+        const accessToken = tokenArray[1];
         const decoded = verifyAccessToken(accessToken);
-
         if (!token) {
             return res.status(401).send("Your token not found");
         }
 
+        if (decoded.exp == true) {
+            req.userId = decoded.userId;
+            return checkRefreshToken(req, res, next);
+        }
         const user = await User.findById(decoded.userId);
 
         if (!user || user.isActive !== "active") {

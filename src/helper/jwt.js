@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+const { TokenExpiredError } = jwt;
 import { configDotenv } from "dotenv";
 configDotenv();
 
@@ -26,7 +27,7 @@ const verifyAccessToken = (access_token) => {
         if (err instanceof TokenExpiredError) {
             const decoded = jwt.decode(access_token);
             return {
-                exp: decoded.exp,
+                exp: true,
                 userId: decoded.userId
             }
         }
@@ -41,7 +42,7 @@ const verifyRefreshToken = (refresh_token) => {
     } catch (err) {
         if (err instanceof TokenExpiredError) {
             return {
-                expired: true
+                exp: true
             }
         }
         console.log(err);

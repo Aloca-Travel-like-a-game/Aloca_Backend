@@ -32,13 +32,14 @@ const getTravelKeywords = () => {
         "kinh nghiệm du lịch",
         "dịch vụ hướng dẫn",
         "công ty du lịch",
-        "tour du lịch tự túc"
+        "tour du lịch tự túc",
+        "tôi muốn đi chụp ảnh"
     ]
     return keywordsData
 }
 
 const checkTravelRelated = (message, keywords) => {
-    if(typeof message !== 'string'){
+    if (typeof message !== 'string') {
         throw new Error('message must be a string');
     }
     for (const keyword of keywords) {

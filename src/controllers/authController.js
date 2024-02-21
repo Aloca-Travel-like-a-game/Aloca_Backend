@@ -1,7 +1,7 @@
 import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import sendVerificationCodeEmail from "../email/sendVerificationCodeEmail.js";
-import { generateAccessToken, generateRefreshToken } from "../helper/jwt.js";
+import { generateAccessToken, generateRefreshToken, verifyAccessToken } from "../helper/jwt.js";
 import { generateVerificationCode } from "../helper/verificationCode.js";
 const register = async (req, res) => {
     try {
@@ -165,8 +165,8 @@ const resetPassword = async (req, res) => {
         if (password !== confirmPassword) {
             return res.status(401).json({ message: "Password and Confirm Password do not match" })
         }
-
-        await User.findOneAndUpdate({ _id: checkUser._id }, { password, code: "" });
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await User.findOneAndUpdate({ _id: checkUser._id }, { password: hashedPassword, code: "" });
         return res.status(200).json({ message: "Update password successfully" })
     }
     catch (err) {
@@ -177,8 +177,14 @@ const resetPassword = async (req, res) => {
 
 const refreshToken = async (req, res) => {
     try {
-        const { token } = req.params;
-        if(!refreshToken);
+        const { token } = req.req.headers.authorization;
+        const tokenArray = token.split(' ');
+        const accessToken = tokenArray[1];
+        
+        if (!token) {
+            return res.status(400).json({ message: "Missing token parameter" });
+        }
+        const newToken = verifyAccessToken(accessToken);
     }
     catch (err) {
         console.log(err);
