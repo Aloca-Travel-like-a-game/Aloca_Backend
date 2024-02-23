@@ -13,6 +13,7 @@ const checkAuthentication = async (req, res, next) => {
 
         if (decoded.exp == true) {
             req.userId = decoded.userId;
+            console.log("Your Access Token was expired");
             return checkRefreshToken(req, res, next);
         }
         const user = await User.findById(decoded.userId);

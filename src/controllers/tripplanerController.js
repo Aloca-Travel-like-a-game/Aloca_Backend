@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI, HarmBlockThreshold, HarmCategory } from "@google/generative-ai";
+import { getImagesFromLocation } from "../helper/trip.js";
 
 import { configDotenv } from "dotenv";
 configDotenv();
@@ -37,20 +38,32 @@ const createTrip = async (req, res) => {
             generationConfig,
             safetySettings
         });
+        // getImagesFromLocation(location)
+        //     .then(location => {
+        //         return location;
+        //     })
+        //     .catch(err => {
+        //         console.error(err);
+        //         return res.status(402).json({ message: "Not found this location" })
+        //     });
+            
         const result = await chat.sendMessage(`
             - Địa điểm: Đà Nẵng
             - Số lượng người: 3
             - Ngân sách: 1 triệu vnd
-            - Sở thích: Ngoài trời
-            Bạn có thể tạo ra (2 kế hoạch khác nhau) cho 3 ngày và các giá tiền cần chi cho mỗi day? Vui lòng cho ra chuỗi JSON format, với từ khóa là
-            plan_nb:{
-                "day_nb": {
+            - Sở thích: Lịch sử
+            Bạn có thể tạo ra (2 kế hoạch khác nhau và ngân sách mỗi kế hoạch là 1 triệu) từ ngày 22/2/2024-24/2/2024 và các giá tiền cần chi cho mỗi day? Vui lòng cho ra chuỗi JSON format, với từ khóa là
+            plan1:{
+                "transportCostTotal": total money of this plan,
+                "foodCostTotal": total money of this plan,
+                "day1": {
+                    title:"biggest location",
                     "activities": [
-                        title:"biggest location",
                         challenge:[
-                            some challenge involved here
+                            some challenges that users can take pictures of 
                         ],
-                    "budget": money
+                    "transportCost": money,
+                    "foodCost": money
                 ]}}`);
         const response = result.response.candidates;
         const hasContent = response.some(item => item.content)
@@ -59,18 +72,19 @@ const createTrip = async (req, res) => {
         }
         const TripResponse = response[0].content.parts[0].text;
         console.log(TripResponse);
-        if (TripResponse.includes("```json")) {
+        if (TripResponse.includes("```")) {
             return res.status(200).json({ message: "Create the plan successfully", data: TripResponse })
         } else {
             return res.status(400).json({ message: "An error occurred while creating the trip plan, please try again" });
         }
-
     }
     catch (err) {
         console.log(err);
         return res.status(500).json("Internal Server Error");
     }
 }
+
+
 
 export {
     createTrip

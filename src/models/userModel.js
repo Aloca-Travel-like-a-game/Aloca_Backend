@@ -7,11 +7,20 @@ const UserSchema = mongoose.Schema({
         unique: true,
         lowercase: true
     },
+    fullname: String,
     email: {
         type: String,
         required: [true, "Email is required field!"],
         unique: true,
         lowercase: true
+    },
+    image: {
+        type: String,
+        default: ""
+    },
+    backgroundImage: {
+        type: String,
+        default: ""
     },
     phone: {
         type: Number
@@ -42,6 +51,14 @@ const UserSchema = mongoose.Schema({
     refreshToken: String,
 })
 
+UserSchema.pre("save", function (next) {
+    if (!this.fullname) {
+        this.fullname = this.username;
+    }
+    next();
+})
+
 const User = mongoose.model("User", UserSchema);
+
 
 export default User;
