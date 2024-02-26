@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { getProfile } from "../controllers/userController.js";
+import { updateProfile } from "../controllers/userController.js";
 import checkAuthentication from "../middlewares/checkAuthentication.js";
 
 const router = Router();
 
-router.get("/profile", checkAuthentication, getProfile)
+router.post("/profile", checkAuthentication, updateProfile)
 
 export default router;

@@ -14,9 +14,11 @@ const runChat = async (req, res) => {
         const travelKeywords = getTravelKeywords();
         if (checkTravelRelated(message, travelKeywords)) {
             let chatAi = await ChatAi.findOne({ userId, _id: idChat });
+            let checkNewChat = false;
             if (!chatAi) {
                 const title = extractTitle(message);
                 chatAi = new ChatAi({ userId, title })
+                checkNewChat = true
                 await chatAi.save();
             }
             const genAI = new GoogleGenerativeAI(process.env.API_KEY_CHAT);
@@ -45,6 +47,12 @@ const runChat = async (req, res) => {
                     threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
                 },
             ];
+            if (checkNewChat == false) {
+                const responses = await Response.find({ chatAiId: chatAi._id });
+                const questions = await Question.find({ chatAiId: chatAi._id });
+                console.log(responses, question);
+            }
+
             const chat = model.startChat({
                 generationConfig,
                 safetySettings
@@ -55,11 +63,12 @@ const runChat = async (req, res) => {
             if (!hasContent) {
                 return res.status(400).json({ message: "An error occurred while sending the message, try again", chatAi })
             }
+            const ChatResponse = response[0].content.parts[0].text;
+            console.log(ChatResponse);
             const question = new Question({ chatAiId: chatAi._id, content: message })
             await question.save();
-            const responseAi = new Response({ chatAiId: chatAi._id, content: message })
+            const responseAi = new Response({ chatAiId: chatAi._id, content: ChatResponse })
             await responseAi.save();
-            const ChatResponse = response[0].content.parts[0].text;
             return res.status(200).json({ message: "Send message successfully", data: { chatAi, ChatResponse } })
         } else {
             res.status(400).json({ message: "Sorry, The application only supports travel-related topics and using Vietnamese" })
@@ -68,6 +77,16 @@ const runChat = async (req, res) => {
     catch (err) {
         console.log(err);
         return res.status(500).json({ messages: "Internal Server Error" })
+    }
+}
+
+const handleIncomingMessage = async (message, userId) => {
+    try {
+
+    }
+    catch (err) {
+        console.log(err);
+        throw new Error("Error handling incoming message")
     }
 }
 
@@ -96,7 +115,7 @@ const getDataChatDetail = async (req, res) => {
         const chatId = req.params.id;
 
         const questions = await Question.find({ chatAiId: chatId });
-        const responses = await Response.find({ chatAiId: chatId });    
+        const responses = await Response.find({ chatAiId: chatId });
 
         return res.status(200).json({ message: "Successfully", questions, responses })
     }

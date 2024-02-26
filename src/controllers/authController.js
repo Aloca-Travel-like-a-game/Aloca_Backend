@@ -91,9 +91,20 @@ const login = async (req, res) => {
             }, {
                 refreshToken: refreshToken
             });
+            let userData = JSON.parse(JSON.stringify(checkAccount));
+            delete userData.refreshToken
+            delete userData._id;
+            delete userData.password;
+            delete userData.code;
+            delete userData.isActive;
+            delete userData.role;
+            delete userData.createdAt;
+            delete userData.updatedAt;
+            delete userData.__v;
             return res.status(200).json({
                 message: "Login successfully",
-                accessToken: accessToken
+                accessToken: accessToken,
+                data: userData
             })
         }
     }
@@ -180,7 +191,7 @@ const refreshToken = async (req, res) => {
         const { token } = req.req.headers.authorization;
         const tokenArray = token.split(' ');
         const accessToken = tokenArray[1];
-        
+
         if (!token) {
             return res.status(400).json({ message: "Missing token parameter" });
         }

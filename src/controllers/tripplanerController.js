@@ -46,11 +46,11 @@ const createTrip = async (req, res) => {
         //         console.error(err);
         //         return res.status(402).json({ message: "Not found this location" })
         //     });
-            
+
         const result = await chat.sendMessage(`
-            - Địa điểm: Đà Nẵng
-            - Số lượng người: 3
-            - Ngân sách: 1 triệu vnd
+            - Địa điểm:Huế
+            - Số lượng người: 4
+            - Ngân sách: 1 tỷ vnd
             - Sở thích: Lịch sử
             Bạn có thể tạo ra (2 kế hoạch khác nhau và ngân sách mỗi kế hoạch là 1 triệu) từ ngày 22/2/2024-24/2/2024 và các giá tiền cần chi cho mỗi day? Vui lòng cho ra chuỗi JSON format, với từ khóa là
             plan1:{
@@ -70,13 +70,19 @@ const createTrip = async (req, res) => {
         if (!hasContent) {
             return res.status(400).json({ message: "An error occurred while creating the trip plan, try again" })
         }
-        const TripResponse = response[0].content.parts[0].text;
-        console.log(TripResponse);
-        if (TripResponse.includes("```")) {
-            return res.status(200).json({ message: "Create the plan successfully", data: TripResponse })
-        } else {
-            return res.status(400).json({ message: "An error occurred while creating the trip plan, please try again" });
+        let TripResponse = response[0].content.parts[0].text;
+        let jsonString;
+        if (TripResponse.startsWith("```")) {
+            jsonString = TripResponse.slice(3);
         }
+        if (jsonString.endsWith("```")) {
+            jsonString = jsonString.slice(0, -3);
+        }
+        if (jsonString.startsWith("json")) {
+            jsonString = jsonString.slice(4);
+        }
+        let jsonObject = JSON.parse(jsonString);
+        return res.status(200).json({ message: "Create the plan successfully", data: jsonObject })
     }
     catch (err) {
         console.log(err);

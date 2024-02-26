@@ -1,18 +1,16 @@
 import User from "../models/userModel.js";
-const getProfile = async (req, res) => {
+const updateProfile = async (req, res) => {
     try {
+        const { fullname, email, phone, address } = req.body;
         const userId = req.userData._id;
-        const userData = await User.findById(userId);
-        if (!userData) {
-            return res.status(401).json({ message: "User not found" })
+        if (!fullname === undefined || !email === undefined || !phone === undefined || !address === undefined) {
+            return res.status(400).json({ message: "Please provide full information fullname, email, phone, address" })
         }
-        const userDatas = {
-            fullname: userData.fullname,
-            email: userData.email,
-            phone: userData.phone,
-            address: userData.address,
+        if (isNaN(phone)) {
+            return res.status(400).json({ message: "Phone number must be a valid number" });
         }
-        return res.status(200).json({ message: "get data user successfully", data: userDatas })
+        await User.findByIdAndUpdate(userId, { fullname, email, phone, address })
+        return res.status(200).json({ message: "Update profile successfully" })
     }
     catch (err) {
         console.log(err);
@@ -20,4 +18,4 @@ const getProfile = async (req, res) => {
     }
 }
 
-export { getProfile };
+export { updateProfile };
