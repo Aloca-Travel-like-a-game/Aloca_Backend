@@ -15,6 +15,7 @@ const runChat = async (req, res) => {
         if (checkTravelRelated(message, travelKeywords)) {
             let chatAi = await ChatAi.findOne({ userId, _id: idChat });
             let checkNewChat = false;
+            let history = null;
             if (!chatAi) {
                 const title = extractTitle(message);
                 chatAi = new ChatAi({ userId, title })
@@ -50,13 +51,22 @@ const runChat = async (req, res) => {
             if (checkNewChat == false) {
                 const responses = await Response.find({ chatAiId: chatAi._id });
                 const questions = await Question.find({ chatAiId: chatAi._id });
-                console.log(responses, question);
+                if (responses.length != 0 && questions != 0) {
+                    let mergedArray = [
+                        ...responses.map((response) => ({ role: "model", parts: response.content, createdAt: response.createdAt })),
+                        ...questions.map((question) => ({ role: "user", parts: question.content, createdAt: question.createdAt }))
+                    ];
+                    mergedArray.sort((a, b) => a.createdAt - b.createdAt);
+                    let resultArray = mergedArray.map((res) => ({ role: res.role, parts: res.parts }));
+                    history =resultArray
+                }
             }
-
             const chat = model.startChat({
+                history,
                 generationConfig,
                 safetySettings
             });
+
             const result = await chat.sendMessage(message);
             const response = result.response.candidates;
             const hasContent = response.some(item => item.content)
@@ -64,7 +74,6 @@ const runChat = async (req, res) => {
                 return res.status(400).json({ message: "An error occurred while sending the message, try again", chatAi })
             }
             const ChatResponse = response[0].content.parts[0].text;
-            console.log(ChatResponse);
             const question = new Question({ chatAiId: chatAi._id, content: message })
             await question.save();
             const responseAi = new Response({ chatAiId: chatAi._id, content: ChatResponse })
@@ -77,16 +86,6 @@ const runChat = async (req, res) => {
     catch (err) {
         console.log(err);
         return res.status(500).json({ messages: "Internal Server Error" })
-    }
-}
-
-const handleIncomingMessage = async (message, userId) => {
-    try {
-
-    }
-    catch (err) {
-        console.log(err);
-        throw new Error("Error handling incoming message")
     }
 }
 
