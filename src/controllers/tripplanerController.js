@@ -6,7 +6,7 @@ configDotenv();
 
 const createTrip = async (req, res) => {
     try {
-        const { location, startDate, endDate, numberOfPeople, budget, interest } = req.body;
+        const { location, startDate, endDate, numberOfPeople, budget, interest, userLocation } = req.body;
 
         const genAI = new GoogleGenerativeAI(process.env.API_KEY_CHAT);
         const model = genAI.getGenerativeModel({ model: process.env.MODEL_NAME });
@@ -14,7 +14,7 @@ const createTrip = async (req, res) => {
             temperature: 1.0,
             topK: 10,
             topP: 0.7,
-            maxOutputTokens: 2048,
+            maxOutputTokens: 10048,
         };
         const safetySettings = [
             {
@@ -48,23 +48,22 @@ const createTrip = async (req, res) => {
         //     });
 
         const result = await chat.sendMessage(`
-            - Địa điểm:Huế
-            - Số lượng người: 4
-            - Ngân sách: 1 tỷ vnd
-            - Sở thích: Lịch sử
-            Bạn có thể tạo ra (2 kế hoạch khác nhau và ngân sách mỗi kế hoạch là 1 triệu) từ ngày 22/2/2024-24/2/2024 và các giá tiền cần chi cho mỗi day? Vui lòng cho ra chuỗi JSON format, với từ khóa là
-            plan1:{
-                "transportCostTotal": total money of this plan,
-                "foodCostTotal": total money of this plan,
-                "day1": {
-                    title:"biggest location",
-                    "activities": [
-                        challenge:[
-                            some challenges that users can take pictures of 
-                        ],
-                    "transportCost": money,
-                    "foodCost": money
-                ]}}`);
+            - Địa điểm:${location}
+            - Số lượng người: ${numberOfPeople}
+            - Ngân sách: ${budget} vnd
+            - Sở thích: ${interest}
+            Bạn có thể tạo ra 2 plan khác nhau (The amount for each plan required should be close to ${budget} vnd) gồm 4 ngày và các giá tiền cần chi cho mỗi day(Tôi sống ở ${userLocation})? Vui lòng cho ra chuỗi JSON format, với từ khóa là
+            plannb:{
+            "daynb": {
+            title:"biggest location",
+            "activities": [
+            challenges:[
+                    {"challenge_summary": string, "google_maps_address": string, "Level_of_difficult":string(Eazy, Normal, Hard)}
+                ],
+                "transportCost": money,
+                "foodCost": money
+            ]}}
+        NO TEXT IN THE RESPONSE, ONLY JSON`);
         const response = result.response.candidates;
         const hasContent = response.some(item => item.content)
         if (!hasContent) {

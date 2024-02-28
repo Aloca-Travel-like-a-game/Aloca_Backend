@@ -124,14 +124,14 @@ const getDataChatDetail = async (req, res) => {
     }
 }
 
-const deleteChat = async() => {
-try{
-
-}
-catch(err){
-    console.log(err);
-    return res.status(500).json({message:"Internal Server Error"})
-}
+const deleteChat = async () => {
+    try {
+        
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Internal Server Error" })
+    }
 }
 
 export { runChat, getDataChat, getDataChatDetail };
