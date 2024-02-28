@@ -4,8 +4,7 @@ configDotenv();
 
 const sendVerificationCodeEmail = (userEmail, verificationCode) => {
     const transporter = nodemailer.createTransport({
-        host: process.env.HOST_MAIL,
-        port: process.env.PORT_MAIL,
+        service:"gmail",
         auth: {
             user: process.env.USERNAME_MAIL,
             pass: process.env.PASSWORD_MAIL
@@ -13,10 +12,10 @@ const sendVerificationCodeEmail = (userEmail, verificationCode) => {
     })
 
     const mailOptions = {
-        from: "Admin@aloca.com",
+        from: "ALOCA <khanhabcdd5@gmail.com>",
         to: userEmail,
-        subject: "Xác nhận tài khoản",
-        text: `Mã xác nhận tài khoản của bạn là ${verificationCode}`
+        subject: "[ALOCA] Account Confirmation Code",
+        text: `Your account confirmation code is ${verificationCode}`
     }
 
     transporter.sendMail(mailOptions, (err, info) => {

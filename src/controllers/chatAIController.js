@@ -58,7 +58,7 @@ const runChat = async (req, res) => {
                     ];
                     mergedArray.sort((a, b) => a.createdAt - b.createdAt);
                     let resultArray = mergedArray.map((res) => ({ role: res.role, parts: res.parts }));
-                    history =resultArray
+                    history = resultArray
                 }
             }
             const chat = model.startChat({
@@ -85,7 +85,7 @@ const runChat = async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        return res.status(500).json({ messages: "Internal Server Error" })
+        return res.status(500).json({ message: "Internal Server Error" })
     }
 }
 
@@ -120,8 +120,18 @@ const getDataChatDetail = async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        return res.status(500).json({ messages: "Internal Server Error" })
+        return res.status(500).json({ message: "Internal Server Error" })
     }
+}
+
+const deleteChat = async() => {
+try{
+
+}
+catch(err){
+    console.log(err);
+    return res.status(500).json({message:"Internal Server Error"})
+}
 }
 
 export { runChat, getDataChat, getDataChatDetail };
