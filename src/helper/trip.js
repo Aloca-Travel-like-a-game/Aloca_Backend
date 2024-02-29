@@ -14,7 +14,7 @@ const getImagesFromLocation = async (location) => {
         }
     } catch (err) {
         console.error(err);
-        return null;
+        throw err;
     }
 };
 

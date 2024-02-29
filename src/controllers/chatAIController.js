@@ -71,7 +71,7 @@ const runChat = async (req, res) => {
             const response = result.response.candidates;
             const hasContent = response.some(item => item.content)
             if (!hasContent) {
-                return res.status(400).json({ message: "An error occurred while sending the message, try again", chatAi })
+                return res.status(400).json({ message: "Đã xảy ra lỗi trong quá trình gửi tin nhắn, thử lại", chatAi })
             }
             const ChatResponse = response[0].content.parts[0].text;
             const question = new Question({ chatAiId: chatAi._id, content: message })
@@ -80,7 +80,7 @@ const runChat = async (req, res) => {
             await responseAi.save();
             return res.status(200).json({ message: "Send message successfully", data: { chatAi, ChatResponse } })
         } else {
-            res.status(400).json({ message: "Sorry, The application only supports travel-related topics and using Vietnamese" })
+            res.status(400).json({ message: "Xin lỗi, Ứng dụng của chúng tôi chỉ hỗ trợ tiếng việt và các chủ đề liên quan đến du lịch" })
         }
     }
     catch (err) {

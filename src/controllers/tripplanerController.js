@@ -6,7 +6,7 @@ configDotenv();
 
 const createTrip = async (req, res) => {
     try {
-        const { location, startDate, endDate, numberOfPeople, budget, interest, userLocation } = req.body;
+        const { location, startDate, endDate, numberOfPeople, budget, interest, userLocation, numberOfDay } = req.body;
 
         const genAI = new GoogleGenerativeAI(process.env.API_KEY_CHAT);
         const model = genAI.getGenerativeModel({ model: process.env.MODEL_NAME });
@@ -38,21 +38,15 @@ const createTrip = async (req, res) => {
             generationConfig,
             safetySettings
         });
-        // getImagesFromLocation(location)
-        //     .then(location => {
-        //         return location;
-        //     })
-        //     .catch(err => {
-        //         console.error(err);
-        //         return res.status(402).json({ message: "Not found this location" })
-        //     });
+        const imageUrl = await getImagesFromLocation(location);
+        return res.status(200).send(imageUrl);
 
         const result = await chat.sendMessage(`
             - Địa điểm:${location}
             - Số lượng người: ${numberOfPeople}
             - Ngân sách: ${budget} vnd
             - Sở thích: ${interest}
-            Bạn có thể tạo ra 2 plan khác nhau (The amount for each plan required should be close to ${budget} vnd) gồm 4 ngày và các giá tiền cần chi cho mỗi day(Tôi sống ở ${userLocation})? Vui lòng cho ra chuỗi JSON format, với từ khóa là
+            Bạn có thể tạo ra 2 plan khác nhau (The amount for each plan required should be close to ${budget} vnd) gồm ${numberOfDay} ngày và các giá tiền cần chi cho mỗi day(Tôi sống ở ${userLocation})? Vui lòng cho ra chuỗi JSON format, với từ khóa là
             plannb:{
             "daynb": {
             title:"biggest location",
