@@ -28,7 +28,7 @@ const runChat = async (req, res) => {
                 temperature: 0.9,
                 topK: 1,
                 topP: 1,
-                maxOutputTokens: 500,
+                maxOutputTokens: 2048,
             };
             const safetySettings = [
                 {
@@ -62,9 +62,9 @@ const runChat = async (req, res) => {
                 }
             }
             const chat = model.startChat({
-                history,
                 generationConfig,
-                safetySettings
+                safetySettings,
+                history
             });
 
             const result = await chat.sendMessage(message);
@@ -124,9 +124,20 @@ const getDataChatDetail = async (req, res) => {
     }
 }
 
-const deleteChat = async () => {
+const deleteChat = async (req, res) => {
     try {
+        const chatId = req.params.id;
+        const userId = req.userData._id;
+        const checkChat = await ChatAi.findOne({ _id: chatId, userId })
 
+        if (!checkChat) {
+            return res.status(200).json({ message: "This conversation does not exist" })
+        }
+        await ChatAi.deleteOne({ _id: chatId });
+        await Response.deleteMany({ chatId });
+        await Question.deleteMany({ chatId });
+
+        res.status(200).json({ message: "Conversation deleted successfully" });
     }
     catch (err) {
         console.log(err);
@@ -134,4 +145,4 @@ const deleteChat = async () => {
     }
 }
 
-export { runChat, getDataChat, getDataChatDetail };
+export { runChat, getDataChat, getDataChatDetail, deleteChat };
