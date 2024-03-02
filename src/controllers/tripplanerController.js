@@ -49,12 +49,12 @@ const createTrip = async (req, res) => {
             title:"biggest location",
             "activities": [
             challenges:[
-                    {"challenge_summary": string, "google_maps_address": string, "Level_of_difficult":string(Eazy, Normal, Hard ONLY THIS FIELD USING ENGLISH)}
+                    {"challenge_summary": string, "google_maps_address": string, "Level_of_difficult":string(Eazy, Normal, Hard)}
                 ],
                 "transportCost": money,
                 "foodCost": money
             ]}}
-        NO TEXT IN THE RESPONSE, ONLY JSON`);
+            THERE IS NO TEXT IN THE REPLY, ONLY JSON AND LANGUAGE IS VIETNAMESE AND ONLY FIELD LEVEL_of_difficult USE ENGLISH`);
 
         const response = result.response.candidates;
         const hasContent = response.some(item => item.content)
@@ -62,6 +62,7 @@ const createTrip = async (req, res) => {
             return res.status(200).json({ message: "An error occurred while creating the trip plan, try again" })
         }
         let TripResponse = response[0].content.parts[0].text;
+        console.log(TripResponse);
         let jsonString;
         if (TripResponse.startsWith("```")) {
             jsonString = TripResponse.slice(3);
@@ -81,7 +82,16 @@ const createTrip = async (req, res) => {
     }
 }
 
+const saveTripPlanner = async (req, res) => {
+    try {
+        const { location, numberOfPeople, budget, interest, userLocation, numberOfDay } = req.body;
 
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json("Internal Server Error");
+    }
+}
 
 export {
     createTrip

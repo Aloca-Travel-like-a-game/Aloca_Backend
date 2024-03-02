@@ -145,16 +145,18 @@ const forgotPassword = async (req, res) => {
             return res.status(401).json({ message: "The email is not exist" });
         }
         if (checkUser.isActive == "notActive") {
-
+            return res.status(401).json({ message: "Your account not active" })
         }
         else if (checkUser.isActive == "delete") {
-
+            return res.status(401).json({ message: "Your account not exist" })
         }
         const verificationCode = generateVerificationCode();
         sendVerificationCodeEmail(email, verificationCode);
-        await User.updateOne({
-            code: verificationCode
-        })
+        await User.updateOne(
+            { email: email },
+            {
+                $set: { code: verificationCode }
+            })
         return res.status(200).json({ message: "The new code was successfully generated" })
     }
     catch (err) {
