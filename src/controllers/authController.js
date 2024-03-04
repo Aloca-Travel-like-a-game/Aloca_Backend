@@ -171,7 +171,6 @@ const verifyCodeResetPassword = async (req, res) => {
         const { email } = req.body;
 
         const checkUser = await User.findOne({ email });
-
         if (!checkUser) {
             return res.status(401).json({ message: "The account is not exist" });
         }
