@@ -5,4 +5,4 @@ const generateVerificationCode = () => {
     return randomCode
 }
 
-export { generateVerificationCode }
+export { generateVerificationCode } 
