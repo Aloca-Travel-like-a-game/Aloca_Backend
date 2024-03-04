@@ -173,6 +173,7 @@ const verifyCodeResetPassword = async (req, res) => {
         if (!checkUser) {
             return res.status(401).json({ message: "The account is not exist" });
         }
+        await User.findOneAndUpdate({ _id: checkUser._id }, { code: "" })
         return res.status(200).json({ message: "Code verification successful", userId: checkUser._id })
     }
     catch (err) {
@@ -194,7 +195,7 @@ const resetPassword = async (req, res) => {
             return res.status(401).json({ message: "Password and Confirm Password do not match" })
         }
         const hashedPassword = await bcrypt.hash(password, 10);
-        await User.findOneAndUpdate({ _id: checkUser._id }, { password: hashedPassword });
+        await User.findOneAndUpdate({ _id: userId }, { password: hashedPassword });
         return res.status(200).json({ message: "Update password successfully" })
     }
     catch (err) {
