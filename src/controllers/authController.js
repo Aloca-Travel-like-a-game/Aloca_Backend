@@ -167,12 +167,16 @@ const forgotPassword = async (req, res) => {
 
 const verifyCodeResetPassword = async (req, res) => {
     try {
-        const { token } = req.params;
-        const checkUser = await User.findOne({ code: token });
+        const { token, email } = req.params;
+        const checkUser = await User.findOne({ email });
 
         if (!checkUser) {
             return res.status(401).json({ message: "The account is not exist" });
         }
+        if (token != checkUser.code) {
+            return res.status(401).json({ message: "Your code is incorect" });
+        }
+        
         await User.findOneAndUpdate({ _id: checkUser._id }, { code: "" })
         return res.status(200).json({ message: "Code verification successful", userId: checkUser._id })
     }
