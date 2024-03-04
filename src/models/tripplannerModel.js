@@ -9,8 +9,6 @@ const TripPlannerSchema = mongoose.Schema({
     imageUrl: String,
     transportCostTotal: Number,
     foodCostTotal: Number,
-    notificationTime: Date,
-    notificationSent: { type: Boolean, default: "False" }
 })
 
 const Tripplan = mongoose.model("Tripplan", TripPlannerSchema);

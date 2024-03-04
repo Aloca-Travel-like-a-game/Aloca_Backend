@@ -165,11 +165,26 @@ const forgotPassword = async (req, res) => {
     }
 }
 
-const resetPassword = async (req, res) => {
+const verifyCodeResetPassword = async (req, res) => {
     try {
         const { token } = req.params;
-        const { password, confirmPassword } = req.body;
         const checkUser = await User.findOne({ code: token });
+
+        if (!checkUser) {
+            return res.status(401).json({ message: "The account is not exist" });
+        }
+        return res.status(200).json({ message: "Code verification successful", userId: checkUser._id })
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Internal Servel Error" });
+    }
+}
+
+const resetPassword = async (req, res) => {
+    try {
+        const { userId, password, confirmPassword } = req.body;
+        const checkUser = await User.findById(userId);
 
         if (!checkUser) {
             return res.status(401).json({ message: "The account is not exist" });
@@ -179,7 +194,7 @@ const resetPassword = async (req, res) => {
             return res.status(401).json({ message: "Password and Confirm Password do not match" })
         }
         const hashedPassword = await bcrypt.hash(password, 10);
-        await User.findOneAndUpdate({ _id: checkUser._id }, { password: hashedPassword, code: "" });
+        await User.findOneAndUpdate({ _id: checkUser._id }, { password: hashedPassword });
         return res.status(200).json({ message: "Update password successfully" })
     }
     catch (err) {
@@ -209,6 +224,7 @@ export {
     register,
     confirmAccount,
     refreshVerificationCode,
+    verifyCodeResetPassword,
     login,
     forgotPassword,
     resetPassword,

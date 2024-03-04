@@ -1,11 +1,10 @@
 import mongoose from "mongoose";
 
 const ChallengeSchema = mongoose.Schema({
-    date: Date,
-    tripId: { type: mongoose.Schema.ObjectId, ref: "Tripplan" },
-    title: String,
-    transportCost: Number,
-    foodCost: Number
+    tripDayId: { type: mongoose.Schema.ObjectId, ref: "Tripplan" },
+    challengeSummary: String,
+    points: Number,
+    imageUrl: String
 })
 
 const Challenge = mongoose.model("Challenge", ChallengeSchema);

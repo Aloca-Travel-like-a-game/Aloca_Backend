@@ -39,23 +39,22 @@ const createTrip = async (req, res) => {
             safetySettings
         });
         const result = await chat.sendMessage(`
-            - Địa điểm:${location}
-            - Số lượng người: ${numberOfPeople}
-            - Ngân sách: ${budget} vnd
-            - Sở thích: ${interest}
-            Bạn có thể tạo ra 2 plan khác nhau (The amount for each plan required should be close to ${budget} vnd) gồm ${numberOfDay} ngày và các giá tiền cần chi cho mỗi day(Tôi sống ở ${userLocation})? Vui lòng cho ra chuỗi JSON format, với từ khóa là
-            plannb:{
-            "daynb": {
-            title:"biggest location",
-            "activities": [
-            challenges:[
-                    {"challenge_summary": string, "google_maps_address": string, "Level_of_difficult":string(Eazy, Normal, Hard)}
-                ],
-                "transportCost": money,
-                "foodCost": money
-            ]}}
-            THERE IS NO TEXT IN THE REPLY, ONLY JSON AND LANGUAGE IS VIETNAMESE AND ONLY FIELD LEVEL_of_difficult USE ENGLISH`);
-
+        - Địa điểm:${location}
+        - Số lượng người: ${numberOfPeople}
+        - Ngân sách: ${budget} vnd
+        - Sở thích: ${interest}
+        Bạn có thể tạo ra 2 plan khác nhau (The amount for each plan required should be close to ${budget} vnd) gồm ${numberOfDay} ngày và các giá tiền cần chi cho mỗi day(Tôi sống ở ${userLocation})? Vui lòng cho ra tất cả trong chuỗi JSON format, với từ khóa là
+        plannb:{
+        "daynb": {
+        title:"biggest location",
+        "activities": [
+        challenges:[
+            {"challenge_summary": string, "google_maps_address": string, "level_of_difficult":string}
+        ],
+        "transportCost": money,
+        "foodCost": money
+        ]}}
+        THERE IS NO TEXT IN THE REPLY, ONLY JSON`);
         const response = result.response.candidates;
         const hasContent = response.some(item => item.content)
         if (!hasContent) {
@@ -84,7 +83,17 @@ const createTrip = async (req, res) => {
 
 const saveTripPlanner = async (req, res) => {
     try {
-        const { location, numberOfPeople, budget, interest, userLocation, numberOfDay } = req.body;
+        const { jsonTrip, location, startDay, endDay } = req.body;
+        let totalPric
+        Object.keys(jsonTrip).map(plan => {
+            const planData = jsonTrip[plan];
+            Object.keys(planData).map(day => {
+                const dataDay = planData[day];
+                // console.log(dataDay);
+            })
+            
+            // const saveTripplan = await Tripplan
+        })
 
     }
     catch (err) {
@@ -94,5 +103,6 @@ const saveTripPlanner = async (req, res) => {
 }
 
 export {
-    createTrip
+    createTrip,
+    saveTripPlanner
 }
