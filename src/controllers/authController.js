@@ -167,7 +167,9 @@ const forgotPassword = async (req, res) => {
 
 const verifyCodeResetPassword = async (req, res) => {
     try {
-        const { token, email } = req.params;
+        const { token } = req.params;
+        const { email } = req.body;
+
         const checkUser = await User.findOne({ email });
 
         if (!checkUser) {
@@ -176,7 +178,7 @@ const verifyCodeResetPassword = async (req, res) => {
         if (token != checkUser.code) {
             return res.status(401).json({ message: "Your code is incorect" });
         }
-        
+
         await User.findOneAndUpdate({ _id: checkUser._id }, { code: "" })
         return res.status(200).json({ message: "Code verification successful", userId: checkUser._id })
     }
