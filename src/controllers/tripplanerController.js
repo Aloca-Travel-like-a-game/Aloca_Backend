@@ -84,12 +84,13 @@ const createTrip = async (req, res) => {
 const saveTripPlanner = async (req, res) => {
     try {
         const { jsonTrip, location, startDay, endDay } = req.body;
-        let totalPric
+        let transportCostTotal;
+        let foodCostTotal;
         Object.keys(jsonTrip).map(plan => {
             const planData = jsonTrip[plan];
             Object.keys(planData).map(day => {
                 const dataDay = planData[day];
-                // console.log(dataDay);
+                console.log(day);
             })
             
             // const saveTripplan = await Tripplan

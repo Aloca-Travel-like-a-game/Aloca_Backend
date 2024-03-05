@@ -89,7 +89,7 @@ const checkTravelRelated = (message, keywords) => {
         if (message.includes(keyword)) {
             return true
         }
-        return false
     }
+    return false
 }
 export { getTravelKeywords, checkTravelRelated }
