@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI, HarmBlockThreshold, HarmCategory } from "@google/generative-ai";
-import { checkTravelRelatedWords } from "../helper/travel.js";
+import { getTravelKeywords, checkTravelRelated } from "../helper/travel.js";
 import ChatAi from "../models/chatAiModel.js";
 import Question from "../models/questionModel.js";
 import Response from "../models/responseModel.js";
@@ -12,8 +12,8 @@ const runChat = async (req, res) => {
         const { idChat, message } = req.body;
         const userId = req.userData._id;
 
-        const travelKeywords = checkTravelRelatedWords(message);
-        
+        const travelKeywords = getTravelKeywords(message);
+        console.log(travelKeywords);
         let chatAi = await ChatAi.findOne({ userId, _id: idChat });
         let checkNewChat = false;
         if (checkTravelRelated(message, travelKeywords)) {

@@ -1,32 +1,95 @@
-import axios from "axios";
-
-const fetchRelatedWords = async (word) => {
-    try {
-        const urlApiWord = `https://api.datamuse.com/words?rel_trg=${word}`;
-        const response = await axios.get(urlApiWord);
-        return response.data.map(result => result.word)
-    }
-    catch (err) {
-        console.error('Error fetching related words:', err);
-        return [];
-    }
+const getTravelKeywords = () => {
+    const keywordsData = [
+        "thích",
+        "đi",
+        "nơi",
+        "giá",
+        "trải nghiệm",
+        "tiền",
+        "tốn",
+        "phí",
+        "du lịch",
+        "khách sạn",
+        "vé máy bay",
+        "điểm đến",
+        "kỳ nghỉ",
+        "tour",
+        "địa điểm",
+        "chuyến đi",
+        "ẩm thực",
+        "thắng cảnh",
+        "quốc gia",
+        "thành phố",
+        "bãi biển",
+        "núi",
+        "hồ",
+        "đảo",
+        "di tích lịch sử",
+        "văn hóa dân tộc",
+        "hành hương",
+        "đồ ăn địa phương",
+        "thể thao mạo hiểm",
+        "mua sắm",
+        "thuê xe",
+        "hướng dẫn viên",
+        "tài liệu du lịch",
+        "visa",
+        "quy định an toàn",
+        "điều kiện khí hậu",
+        "dịch vụ du lịch",
+        "kinh nghiệm du lịch",
+        "dịch vụ hướng dẫn",
+        "công ty du lịch",
+        "tour du lịch tự túc",
+        "tôi muốn đi chụp ảnh",
+        "điểm check-in",
+        "trải nghiệm du lịch",
+        "đặt phòng khách sạn",
+        "thực địa du lịch",
+        "phương tiện di chuyển",
+        "đặt tour du lịch",
+        "hành trình du lịch",
+        "visa du lịch",
+        "chi phí du lịch",
+        "an toàn du lịch",
+        "bảo hiểm du lịch",
+        "phương tiện công cộng",
+        "cẩm nang du lịch",
+        "nghỉ dưỡng",
+        "khách sạn sang trọng",
+        "homestay",
+        "hostel",
+        "khu vực vui chơi",
+        "phương tiện cá nhân",
+        "điểm đến thú vị",
+        "văn hóa địa phương",
+        "điểm tham quan",
+        "địa điểm mua sắm",
+        "món ăn địa phương",
+        "nhà hàng địa phương",
+        "sự kiện văn hóa",
+        "hướng dẫn viên du lịch",
+        "trang phục du lịch",
+        "tiện nghi khách sạn",
+        "bảo tàng",
+        "du thuyền",
+        "phà du lịch",
+        "trải nghiệm dân dụ",
+        "trải nghiệm văn hóa",
+        "chợ đêm",
+    ]
+    return keywordsData
 }
 
-const checkTravelRelatedWords = async (message) => {
-    try {
-        const words = message.split(" ");
-        const relatedWords = [];
-        for (const word of words) {
-            const related = await fetchRelatedWords(word);
-            relatedWords.push({ word, related });
+const checkTravelRelated = (message, keywords) => {
+    if (typeof message !== 'string') {
+        throw new Error('message must be a string');
+    }
+    for (const keyword of keywords) {
+        if (message.includes(keyword)) {
+            return true
         }
-
-        console.log(relatedWords);
+        return false
     }
-    catch (err) {
-        console.error("Error when check related words", err);
-    }
-
 }
-
-export { checkTravelRelatedWords }
+export { getTravelKeywords, checkTravelRelated }
