@@ -6,7 +6,6 @@ import { generateVerificationCode } from "../helper/verificationCode.js";
 const register = async (req, res) => {
     try {
         const { username, email, password, confirmPassword } = req.body;
-        const userId = userData._id;
         if (!username || !password || !email) {
             return res.status(401).json({
                 message: "Username, email or password not found"
@@ -31,7 +30,7 @@ const register = async (req, res) => {
         const verificationCode = generateVerificationCode();
         const hashedPassword = await bcrypt.hash(password, 10);
         sendVerificationCodeEmail(email, verificationCode);
-        const newUser = new User({ userId, username, email, password: hashedPassword, code: verificationCode })
+        const newUser = new User({username, email, password: hashedPassword, code: verificationCode })
         await newUser.save();
 
         return res.status(200).json({

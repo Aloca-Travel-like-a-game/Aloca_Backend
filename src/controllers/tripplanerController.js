@@ -136,6 +136,16 @@ const saveTripPlanner = async (req, res) => {
     }
 }
 
+const getDataTrip = async (req, res) => {
+try{
+
+}
+catch(err){
+    console.log(err);
+    return res.status(500).send("Internal Server Error")
+}
+}
+
 export {
     createTrip,
     saveTripPlanner
