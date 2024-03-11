@@ -1,5 +1,14 @@
 const getTravelKeywords = () => {
     const keywordsData = [
+        "mùa",
+        "nơi",
+        "tốn",
+        "chốn",
+        "địa",
+        "điểm",
+        "di tích",
+        "di",
+        "gần",
         "thích",
         "đi",
         "nơi",
@@ -92,4 +101,11 @@ const checkTravelRelated = (message, keywords) => {
     }
     return false
 }
-export { getTravelKeywords, checkTravelRelated }
+
+function getDayOfWeek(dayIndex) {
+    const daysOfWeek = ['Chủ Nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
+    return daysOfWeek[dayIndex];
+}
+
+
+export { getTravelKeywords, checkTravelRelated, getDayOfWeek }

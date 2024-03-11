@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 
 const TripPlannerSchema = mongoose.Schema({
-    title: String,
     userId: { type: mongoose.Schema.ObjectId, ref: "User" },
     startDate: Date,
     endDate: Date,
@@ -9,6 +8,7 @@ const TripPlannerSchema = mongoose.Schema({
     imageUrl: String,
     transportCostTotal: Number,
     foodCostTotal: Number,
+    nameTrip: String
 })
 
 const Tripplan = mongoose.model("Tripplan", TripPlannerSchema);

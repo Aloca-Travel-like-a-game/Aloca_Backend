@@ -3,8 +3,8 @@ import mongoose from "mongoose";
 const TripDaySchema = mongoose.Schema({
     tripId: { type: mongoose.Schema.ObjectId, ref: "Tripplan" },
     day: Number,
+    dayOfWeek: String,
     date: Date,
-    location: String,
     title: String,
     transportCost: Number,
     foodCost: Number

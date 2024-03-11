@@ -1,7 +1,11 @@
 import { GoogleGenerativeAI, HarmBlockThreshold, HarmCategory } from "@google/generative-ai";
-import { getImagesFromLocation } from "../helper/trip.js";
-
 import { configDotenv } from "dotenv";
+import { getDayOfWeek } from "../helper/travel.js";
+import { getImagesFromLocation } from "../helper/trip.js";
+import TripDay from "../models/tripDayModel.js";
+import Tripplan from "../models/tripplannerModel.js";
+import Challenge from "../models/challengeController.js";
+import UserChallengProgress from "../models/userChallengeProgressModel.js";
 configDotenv();
 
 const createTrip = async (req, res) => {
@@ -54,7 +58,7 @@ const createTrip = async (req, res) => {
         "transportCost": money,
         "foodCost": money
         ]}}
-        THERE IS NO TEXT IN THE REPLY, ONLY JSON`);
+        THERE IS NO TEXT IN THE REPLY, ONLY JSON AND USING VIETNAMESE`);
         const response = result.response.candidates;
         const hasContent = response.some(item => item.content)
         if (!hasContent) {
@@ -83,19 +87,48 @@ const createTrip = async (req, res) => {
 
 const saveTripPlanner = async (req, res) => {
     try {
-        const { jsonTrip, location, startDay, endDay } = req.body;
-        let transportCostTotal;
-        let foodCostTotal;
-        Object.keys(jsonTrip).map(plan => {
-            const planData = jsonTrip[plan];
-            Object.keys(planData).map(day => {
-                const dataDay = planData[day];
-                console.log(day);
-            })
-            
-            // const saveTripplan = await Tripplan
-        })
+        const { jsonTrip, location, startDate, endDate, nameTrip } = req.body;
+        const userId = req.userData_id;
+        let transportCostTotal = 0;
+        let foodCostTotal = 0;
+        // const imageUrl = await getImagesFromLocation(location);
+        const tripPlan = new Tripplan({ userId, startDate, endDate, location, nameTrip }) // imageUrl
+        await tripPlan.save();
+        for (const [planKey, planData] of Object.entries(jsonTrip)) {
+            for (const [dayKey, dayData] of Object.entries(planData)) {
+                const dayNumber = parseInt(dayKey.replace('day', ''));
+                const dayDate = new Date(startDate);
+                dayDate.setDate(dayDate.getDate() + dayNumber - 1);
+                const dayOfWeek = getDayOfWeek(dayDate.getDay());
+                const { title, transportCost, foodCost } = dayData;
+                transportCostTotal += transportCost;
+                foodCostTotal += foodCost;
+                const tripday = new TripDay({ tripId: tripPlan._id, day: dayNumber, title, dayOfWeek, date: dayDate, transportCost, foodCost });
+                await tripday.save();
+                const activities = dayData.activities || [];
+                for (const challengeData of activities) {
+                    let { challenge_summary, google_maps_address, level_of_difficult } = challengeData;
+                    if (level_of_difficult == "Eazy" || level_of_difficult == "Dễ") {
+                        level_of_difficult = 10;
+                    }
+                    else if (level_of_difficult == "Normal" || level_of_difficult == "Trung bình") {
+                        level_of_difficult = 20;
 
+                    }
+                    else if (level_of_difficult == "Hard" || level_of_difficult == "Khó") {
+                        level_of_difficult = 30;
+                    }
+                    const challenge = new Challenge({ tripDayId: tripday._id, challengeSummary: challenge_summary, location: google_maps_address, points: level_of_difficult })
+                    await challenge.save();
+                    const userChallengeProgress = new UserChallengProgress({ userId: userId, chaId: challenge._id })
+                    await userChallengeProgress.save();
+                }
+            }
+        }
+        tripPlan.transportCostTotal = transportCostTotal;
+        tripPlan.foodCostTotal = foodCostTotal;
+        await tripPlan.save();
+        return res.status(200).json({ message: "Trip plan saved successfully" })
     }
     catch (err) {
         console.log(err);

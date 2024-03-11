@@ -52,6 +52,10 @@ const UserSchema = mongoose.Schema({
     refreshToken: String,
 })
 
+
+
+
+
 UserSchema.pre("save", function (next) {
     if (!this.fullname) {
         this.fullname = this.username;

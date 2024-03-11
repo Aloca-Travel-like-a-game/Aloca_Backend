@@ -13,7 +13,6 @@ const runChat = async (req, res) => {
         const userId = req.userData._id;
 
         const travelKeywords = getTravelKeywords(message);
-        console.log(travelKeywords);
         let chatAi = await ChatAi.findOne({ userId, _id: idChat });
         let checkNewChat = false;
         if (checkTravelRelated(message, travelKeywords)) {
