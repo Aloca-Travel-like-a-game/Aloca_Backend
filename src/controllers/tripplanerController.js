@@ -56,8 +56,8 @@ const createTrip = async (req, res) => {
         challenges:[
             {"challenge_summary": string, "google_maps_address": ADDRESS(string), "level_of_difficult":string}
         ],
-        "transportCost": money (string),
-        "foodCost": money (string)
+        "transportCost": money (number),
+        "foodCost": money (number)
         ]}}
         THERE IS NO TEXT IN THE REPLY, ONLY JSON AND USING VIETNAMESE AND COMBINE TWO PLAN JSON STRINGS INTO A SINGLE JSON STRING`);
         const response = result.response.candidates;
@@ -66,6 +66,7 @@ const createTrip = async (req, res) => {
             return res.status(200).json({ message: "An error occurred while creating the trip plan, try again" })
         }
         let TripResponse = response[0].content.parts[0].text;
+        console.log(TripResponse);
         let jsonData;
         const startIndex = TripResponse.indexOf('{');
         const endIndex = TripResponse.lastIndexOf('}') + 1;
@@ -98,10 +99,12 @@ const saveTripPlanner = async (req, res) => {
                 const dayDate = new Date(startDate);
                 dayDate.setDate(dayDate.getDate() + dayNumber - 1);
                 const dayOfWeek = getDayOfWeek(dayDate.getDay());
-                const { title, transportCost, foodCost } = dayData;
+                const { title, transportCost, foodCost, google_maps_address } = dayData;
                 transportCostTotal += transportCost;
                 foodCostTotal += foodCost;
-                const tripday = new TripDay({ tripId: tripPlan._id, day: dayNumber, title, dayOfWeek, date: dayDate, transportCost, foodCost, });
+
+                // const imageUrlLocation = await getImagesFromLocation(google_maps_address);
+                const tripday = new TripDay({ tripId: tripPlan._id, day: dayNumber, title, dayOfWeek, date: dayDate, transportCost, foodCost, }); // imageUrlLocation
                 await tripday.save();
                 const activities = dayData.activities || [];
                 for (const challengeData of activities) {
@@ -126,7 +129,7 @@ const saveTripPlanner = async (req, res) => {
         tripPlan.transportCostTotal = transportCostTotal;
         tripPlan.foodCostTotal = foodCostTotal;
         await tripPlan.save();
-        return res.status(200).json({ message: "Trip plan saved successfully" })
+        return res.status(200).json({ message: "Trip plan saved successfully", chatId: tripPlan._id })
     }
     catch (err) {
         console.log(err);
@@ -136,7 +139,7 @@ const saveTripPlanner = async (req, res) => {
 
 const getTrip = async (req, res) => {
     try {
-        const userId = req.userData;
+        const userId = req.userData._id;
         const dataTrip = await Tripplan.find({ userId: userId });
         return res.status(200).json({ message: "Get Trip Successfully", dataTrip })
     }
@@ -149,7 +152,13 @@ const getTrip = async (req, res) => {
 const getDetailTrip = async (req, res) => {
     try {
         const idTrip = req.params.id;
-        console.log(idTrip);
+        const userId = req.userData._id;
+        const dataTrip = Tripplan.find({ _id: idTrip, userId: userId });
+        if (!dataTrip) {
+            return res.status(401).json({ message: "Data Trip not found!" })
+        }
+        const dataTripDay = TripDay.find({ tripId: dataTrip._id });
+
     }
     catch (err) {
         console.log(err);
