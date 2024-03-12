@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const TripDaySchema = mongoose.Schema({
     tripId: { type: mongoose.Schema.ObjectId, ref: "Tripplan" },
+    imageUrl: String,
     day: Number,
     dayOfWeek: String,
     date: Date,

@@ -18,7 +18,7 @@ const createTrip = async (req, res) => {
             temperature: 1.0,
             topK: 10,
             topP: 0.7,
-            maxOutputTokens: 9048,
+            maxOutputTokens: 9548,
         };
         const safetySettings = [
             {
@@ -47,13 +47,14 @@ const createTrip = async (req, res) => {
         - Số lượng người: ${numberOfPeople}
         - Ngân sách: ${budget} vnd
         - Sở thích: ${interest}
-        Bạn có thể tạo ra 2 plan khác nhau (The amount for each plan required should be close to ${budget} vnd) gồm ${numberOfDay} ngày và các giá tiền cần chi cho mỗi day(Tôi sống ở ${userLocation})? Vui lòng cho ra tất cả trong chuỗi JSON format, với từ khóa là
+        Bạn BẮT BUỘC phải tạo ra ít nhất 2 plan khác nhau (The amount for each plan required should be close to ${budget} vnd) gồm ${numberOfDay} ngày và các giá tiền cần chi cho mỗi day(Tôi sống ở ${userLocation})? Vui lòng cho ra tất cả trong chuỗi JSON format, với từ khóa là
         plannb:{
         "daynb": {
         title:"biggest location",
+        "google_maps_address": string ADDRESS,
         "activities": [
         challenges:[
-            {"challenge_summary": string, "google_maps_address": string, "level_of_difficult":string}
+            {"challenge_summary": string, "google_maps_address": ADDRESS(string), "level_of_difficult":string}
         ],
         "transportCost": money,
         "foodCost": money
@@ -66,18 +67,17 @@ const createTrip = async (req, res) => {
         }
         let TripResponse = response[0].content.parts[0].text;
         console.log(TripResponse);
-        let jsonString;
-        if (TripResponse.startsWith("```")) {
-            jsonString = TripResponse.slice(3);
+        let jsonData;
+        const startIndex = TripResponse.indexOf('{');
+        const endIndex = TripResponse.lastIndexOf('}') + 1;
+        if (startIndex !== -1 && endIndex !== -1) {
+            const jsonSubstring = TripResponse.substring(startIndex, endIndex);
+            jsonData = JSON.parse(jsonSubstring);
+            console.log(jsonData);
+        } else {
+            console.log("No valid JSON found in the return data.");
         }
-        if (jsonString.endsWith("```")) {
-            jsonString = jsonString.slice(0, -3);
-        }
-        if (jsonString.startsWith("json")) {
-            jsonString = jsonString.slice(4);
-        }
-        let jsonObject = JSON.parse(jsonString);
-        return res.status(200).json({ message: "Create the plan successfully", data: jsonObject })
+        return res.status(200).json({ message: "Create the plan successfully", data: jsonData })
     }
     catch (err) {
         console.log(err);
@@ -91,9 +91,9 @@ const saveTripPlanner = async (req, res) => {
         const userId = req.userData_id;
         let transportCostTotal = 0;
         let foodCostTotal = 0;
-        // const imageUrl = await getImagesFromLocation(location);
+        // const imageTripPlaceUrl = await getImagesFromLocation(location);
         const tripPlan = new Tripplan({ userId, startDate, endDate, location, nameTrip }) // imageUrl
-        await tripPlan.save();
+        // await tripPlan.save();
         for (const [planKey, planData] of Object.entries(jsonTrip)) {
             for (const [dayKey, dayData] of Object.entries(planData)) {
                 const dayNumber = parseInt(dayKey.replace('day', ''));
@@ -103,8 +103,8 @@ const saveTripPlanner = async (req, res) => {
                 const { title, transportCost, foodCost } = dayData;
                 transportCostTotal += transportCost;
                 foodCostTotal += foodCost;
-                const tripday = new TripDay({ tripId: tripPlan._id, day: dayNumber, title, dayOfWeek, date: dayDate, transportCost, foodCost });
-                await tripday.save();
+                const tripday = new TripDay({ tripId: tripPlan._id, day: dayNumber, title, dayOfWeek, date: dayDate, transportCost, foodCost, });
+                // await tripday.save();
                 const activities = dayData.activities || [];
                 for (const challengeData of activities) {
                     let { challenge_summary, google_maps_address, level_of_difficult } = challengeData;
@@ -119,15 +119,15 @@ const saveTripPlanner = async (req, res) => {
                         level_of_difficult = 30;
                     }
                     const challenge = new Challenge({ tripDayId: tripday._id, challengeSummary: challenge_summary, location: google_maps_address, points: level_of_difficult })
-                    await challenge.save();
+                    // await challenge.save();
                     const userChallengeProgress = new UserChallengProgress({ userId: userId, chaId: challenge._id })
-                    await userChallengeProgress.save();
+                    // await userChallengeProgress.save();
                 }
             }
         }
         tripPlan.transportCostTotal = transportCostTotal;
         tripPlan.foodCostTotal = foodCostTotal;
-        await tripPlan.save();
+        // await tripPlan.save();
         return res.status(200).json({ message: "Trip plan saved successfully" })
     }
     catch (err) {
@@ -136,14 +136,24 @@ const saveTripPlanner = async (req, res) => {
     }
 }
 
-const getDataTrip = async (req, res) => {
-try{
+const getTrip = async (req, res) => {
+    try {
 
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).send("Internal Server Error")
+    }
 }
-catch(err){
-    console.log(err);
-    return res.status(500).send("Internal Server Error")
-}
+
+const getDetailTrip = async (req, res) => {
+    try {
+
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).send("Internal Server Error")
+    }
 }
 
 export {

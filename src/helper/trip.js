@@ -1,8 +1,7 @@
 import axios from "axios"
 
 const getImagesFromLocation = async (location) => {
-
-    const apiKey = "AIzaSyD9fZU8P9-0dLkzG6RHctg9kYfga6gFYNc";
+    const apiKey = "AIzaSyDzCjkgIHZj9SLGd82U4bIzuoMhkowG4Ds";
     const response = await axios.get(`https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${location}&inputtype=textquery&fields=photos,formatted_address,name,rating,opening_hours&key=${apiKey}`);
     const placeData = response.data;
     console.log(placeData);
