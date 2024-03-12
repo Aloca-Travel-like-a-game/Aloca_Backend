@@ -15,11 +15,11 @@ const createTrip = async (req, res) => {
         const genAI = new GoogleGenerativeAI(process.env.API_KEY_CHAT);
         const model = genAI.getGenerativeModel({ model: process.env.MODEL_NAME });
         const generationConfig = {
-            temperature: 1.0,
-            topK: 10,
-            topP: 0.7,
+            temperature: 1.5,
+            topK: 20,
+            topP: 0.5,
             maxOutputTokens: 9548,
-        };
+          };
         const safetySettings = [
             {
                 category: HarmCategory.HARM_CATEGORY_HARASSMENT,
@@ -45,9 +45,9 @@ const createTrip = async (req, res) => {
         const result = await chat.sendMessage(`
         - Địa điểm:${location}
         - Số lượng người: ${numberOfPeople}
-        - Ngân sách: ${budget} vnd
+        - Ngân sách: ${budget} 
         - Sở thích: ${interest}
-        Bạn BẮT BUỘC phải tạo ra ít nhất 2 plan khác nhau (The amount for each plan required should be close to ${budget} vnd) gồm ${numberOfDay} ngày và các giá tiền cần chi cho mỗi day(Tôi sống ở ${userLocation})? Vui lòng cho ra tất cả trong chuỗi JSON format, với từ khóa là
+        Bạn BẮT BUỘC phải tạo ra ít nhất 2 plan khác nhau (The amount for each plan required should be close to ${budget}) gồm ${numberOfDay} ngày và các giá tiền cần chi cho mỗi day(Tôi sống ở ${userLocation})? Vui lòng cho ra tất cả trong chuỗi JSON format, với từ khóa là
         plannb:{
         "daynb": {
         title:"biggest location",
