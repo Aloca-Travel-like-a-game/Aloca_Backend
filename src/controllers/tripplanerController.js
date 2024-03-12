@@ -90,6 +90,12 @@ const saveTripPlanner = async (req, res) => {
         const userId = req.userData._id;
         let transportCostTotal = 0;
         let foodCostTotal = 0;
+
+        const getDataAllTrip = Tripplan.find({ userId: userId });
+        const tripWithSameName = getDataAllTrip.find(trip => trip.name === newTripName);
+        if (tripWithSameName) {
+            return res.status(400).json({ message: "A trip with the same name already exists" })
+        }
         // const imageTripPlaceUrl = await getImagesFromLocation(location);
         const tripPlan = new Tripplan({ userId, startDate, endDate, location, nameTrip }) // imageUrl
         await tripPlan.save();
