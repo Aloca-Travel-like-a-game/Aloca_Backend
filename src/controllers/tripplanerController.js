@@ -165,7 +165,7 @@ const createTrip = async (req, res) => {
 const saveTripPlanner = async (req, res) => {
     try {
         const { jsonTrip, location, startDate, endDate, nameTrip } = req.body;
-        const userId = req.userData_id;
+        const userId = req.userData._id;
         let transportCostTotal = 0;
         let foodCostTotal = 0;
         // const imageTripPlaceUrl = await getImagesFromLocation(location);
@@ -215,7 +215,9 @@ const saveTripPlanner = async (req, res) => {
 
 const getTrip = async (req, res) => {
     try {
-
+        const userId = req.userData;
+        const dataTrip = await Tripplan.find({ userId: userId });
+        return res.status(200).json({ message: "Get Trip Successfully", dataTrip })
     }
     catch (err) {
         console.log(err);
@@ -225,7 +227,8 @@ const getTrip = async (req, res) => {
 
 const getDetailTrip = async (req, res) => {
     try {
-
+        const idTrip = req.params.id;
+        console.log(idTrip);
     }
     catch (err) {
         console.log(err);
@@ -235,5 +238,7 @@ const getDetailTrip = async (req, res) => {
 
 export {
     createTrip,
-    saveTripPlanner
+    saveTripPlanner,
+    getTrip,
+    getDetailTrip
 }
