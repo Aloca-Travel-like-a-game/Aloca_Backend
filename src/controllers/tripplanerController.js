@@ -91,8 +91,9 @@ const saveTripPlanner = async (req, res) => {
         let transportCostTotal = 0;
         let foodCostTotal = 0;
 
-        const getDataAllTrip = Tripplan.find({ userId: userId });
+        const getDataAllTrip = await Tripplan.find({ userId: userId });
         const tripWithSameName = getDataAllTrip.find(trip => trip.name === newTripName);
+        console.log("f", tripWithSameName);
         if (tripWithSameName) {
             return res.status(400).json({ message: "A trip with the same name already exists" })
         }
