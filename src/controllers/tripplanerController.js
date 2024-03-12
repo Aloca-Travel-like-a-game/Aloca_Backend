@@ -56,8 +56,8 @@ const createTrip = async (req, res) => {
         challenges:[
             {"challenge_summary": string, "google_maps_address": ADDRESS(string), "level_of_difficult":string}
         ],
-        "transportCost": money,
-        "foodCost": money
+        "transportCost": money (string),
+        "foodCost": money (string)
         ]}}
         THERE IS NO TEXT IN THE REPLY, ONLY JSON AND USING VIETNAMESE AND COMBINE TWO PLAN JSON STRINGS INTO A SINGLE JSON STRING`);
         const response = result.response.candidates;
