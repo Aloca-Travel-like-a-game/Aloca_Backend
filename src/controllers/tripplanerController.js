@@ -59,7 +59,7 @@ const createTrip = async (req, res) => {
         "transportCost": money,
         "foodCost": money
         ]}}
-        THERE IS NO TEXT IN THE REPLY, ONLY JSON AND USING VIETNAMESE`);
+        THERE IS NO TEXT IN THE REPLY, ONLY JSON AND USING VIETNAMESE AND COMBINE TWO PLAN JSON STRINGS INTO A SINGLE JSON STRING`);
         const response = result.response.candidates;
         const hasContent = response.some(item => item.content)
         if (!hasContent) {
