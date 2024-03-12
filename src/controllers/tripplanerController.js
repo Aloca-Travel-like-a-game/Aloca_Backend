@@ -73,7 +73,6 @@ const createTrip = async (req, res) => {
         if (startIndex !== -1 && endIndex !== -1) {
             const jsonSubstring = TripResponse.substring(startIndex, endIndex);
             jsonData = JSON.parse(jsonSubstring);
-            console.log(jsonData);
         } else {
             console.log("No valid JSON found in the return data.");
         }
