@@ -19,7 +19,7 @@ const createTrip = async (req, res) => {
             topK: 20,
             topP: 0.5,
             maxOutputTokens: 9548,
-          };
+        };
         const safetySettings = [
             {
                 category: HarmCategory.HARM_CATEGORY_HARASSMENT,
@@ -65,7 +65,85 @@ const createTrip = async (req, res) => {
         if (!hasContent) {
             return res.status(200).json({ message: "An error occurred while creating the trip plan, try again" })
         }
-        let TripResponse = response[0].content.parts[0].text;
+        let TripResponse = `
+        {
+            "plan1": {
+                "day1": {
+                    "title": "Khám phá Lịch sử và Văn hóa Bình Dương",
+                        "google_maps_address": "Bình Dương, Việt Nam",
+                            "activities": [
+                                {
+                                    "challenge_summary": "Tham quan Bảo tàng tỉnh Bình Dương để tìm hiểu về lịch sử và văn hóa của tỉnh.",
+                                    "google_maps_address": "Đường Nguyễn Văn Tiết, Phường Chánh Nghĩa, Thành phố Thủ Dầu Một, Bình Dương",
+                                    "level_of_difficult": "Dễ"
+                                },
+                                {
+                                    "challenge_summary": "Dạo bộ quanh Công viên Bình Dương để ngắm cảnh và thư giãn.",
+                                    "google_maps_address": "Đường D30, Phường Hiệp Thành, Thành phố Thủ Dầu Một, Bình Dương",
+                                    "level_of_difficult": "Dễ"
+                                }
+                            ],
+                                "transportCost": 100.000 VND,
+                                    "foodCost": 200.000 VND
+                },
+                "day2": {
+                    "title": "Trải nghiệm Giải trí và Triển lãm",
+                        "google_maps_address": "Bình Dương, Việt Nam",
+                            "activities": [
+                                {
+                                    "challenge_summary": "Tham quan Trung tâm Thương mại AEON Mall Bình Dương Canary để mua sắm và giải trí.",
+                                    "google_maps_address": "Đường ĐT743, Phường Bình Hòa, Thành phố Thuận An, Bình Dương",
+                                    "level_of_difficult": "Dễ"
+                                },
+                                {
+                                    "challenge_summary": "Ghé thăm Bảo tàng tranh 3D Artinus để chụp những bức ảnh độc đáo và thú vị.",
+                                    "google_maps_address": "Đường D1, Phường Đông Hòa, Thành phố Dĩ An, Bình Dương",
+                                    "level_of_difficult": "Dễ"
+                                }
+                            ],
+                                "transportCost": 150.000 VND,
+                                    "foodCost": 250.000 VND
+                }
+            },
+            "plan2": {
+                "day1": {
+                    "title": "Khám phá Thiên nhiên và Lịch sử",
+                        "google_maps_address": "Bình Dương, Việt Nam",
+                            "activities": [
+                                {
+                                    "challenge_summary": "Tham quan Vườn quốc gia Cát Tiên để khám phá hệ động thực vật phong phú.",
+                                    "google_maps_address": "Xã Nam Cát Tiên, Huyện Tân Phú, Đồng Nai",
+                                    "level_of_difficult": "Trung bình"
+                                },
+                                {
+                                    "challenge_summary": "Ghé thăm Khu di tích lịch sử chiến thắng Trảng Bàng để tìm hiểu về cuộc kháng chiến chống Mỹ của nhân dân Bình Dương.",
+                                    "google_maps_address": "Xã Trảng Bàng, Huyện Trảng Bàng, Bình Dương",
+                                    "level_of_difficult": "Dễ"
+                                }
+                            ],
+                                "transportCost": 200.000 VND,
+                                    "foodCost": 300.000 VND
+                },
+                "day2": {
+                    "title": "Trải nghiệm Giải trí và Văn hóa",
+                        "google_maps_address": "Bình Dương, Việt Nam",
+                            "activities": [
+                                {
+                                    "challenge_summary": "Tham quan Công viên nước Đại Nam để tận hưởng các trò chơi dưới nước và giải trí.",
+                                    "google_maps_address": "Đường ĐT746, Xã Hiếu Liêm, Huyện Bắc Tân Uyên, Bình Dương",
+                                    "level_of_difficult": "Dễ"
+                                },
+                                {
+                                    "challenge_summary": "Ghé thăm Nhà hát ca múa nhạc Bình Dương để thưởng thức các chương trình nghệ thuật đặc sắc.",
+                                    "google_maps_address": "Đường Nguyễn Văn Tiết, Phường Chánh Nghĩa, Thành phố Thủ Dầu Một, Bình Dương",
+                                    "level_of_difficult": "Dễ"
+                                }
+                            ],
+                                "transportCost": 150.000 VND,
+                                    "foodCost": 250.000 VND
+                }
+            }
+        } `;
         console.log(TripResponse);
         let jsonData;
         const startIndex = TripResponse.indexOf('{');
@@ -92,7 +170,7 @@ const saveTripPlanner = async (req, res) => {
         let foodCostTotal = 0;
         // const imageTripPlaceUrl = await getImagesFromLocation(location);
         const tripPlan = new Tripplan({ userId, startDate, endDate, location, nameTrip }) // imageUrl
-        // await tripPlan.save();
+        await tripPlan.save();
         for (const [planKey, planData] of Object.entries(jsonTrip)) {
             for (const [dayKey, dayData] of Object.entries(planData)) {
                 const dayNumber = parseInt(dayKey.replace('day', ''));
@@ -103,7 +181,7 @@ const saveTripPlanner = async (req, res) => {
                 transportCostTotal += transportCost;
                 foodCostTotal += foodCost;
                 const tripday = new TripDay({ tripId: tripPlan._id, day: dayNumber, title, dayOfWeek, date: dayDate, transportCost, foodCost, });
-                // await tripday.save();
+                await tripday.save();
                 const activities = dayData.activities || [];
                 for (const challengeData of activities) {
                     let { challenge_summary, google_maps_address, level_of_difficult } = challengeData;
@@ -118,15 +196,15 @@ const saveTripPlanner = async (req, res) => {
                         level_of_difficult = 30;
                     }
                     const challenge = new Challenge({ tripDayId: tripday._id, challengeSummary: challenge_summary, location: google_maps_address, points: level_of_difficult })
-                    // await challenge.save();
+                    await challenge.save();
                     const userChallengeProgress = new UserChallengProgress({ userId: userId, chaId: challenge._id })
-                    // await userChallengeProgress.save();
+                    await userChallengeProgress.save();
                 }
             }
         }
         tripPlan.transportCostTotal = transportCostTotal;
         tripPlan.foodCostTotal = foodCostTotal;
-        // await tripPlan.save();
+        await tripPlan.save();
         return res.status(200).json({ message: "Trip plan saved successfully" })
     }
     catch (err) {
