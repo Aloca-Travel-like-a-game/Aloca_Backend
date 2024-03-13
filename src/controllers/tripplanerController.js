@@ -88,51 +88,44 @@ const saveTripPlanner = async (req, res) => {
     try {
         const { jsonTrip, location, startDate, endDate, nameTrip } = req.body;
         const userId = req.userData._id;
-        console.log("start", startDate);
-        console.log("end", endDate);
         let transportCostTotal = 0;
         let foodCostTotal = 0;
         const getDataAllTrip = await Tripplan.find({ userId: userId });
         const tripWithSameName = getDataAllTrip.find(trip => trip.nameTrip === nameTrip);
-        console.log(tripWithSameName);
         if (tripWithSameName) {
             return res.status(400).json({ message: "A trip with the same name already exists" })
         }
-        console.log(startDate);
-        console.log(endDate);
         // const imageTripPlaceUrl = await getImagesFromLocation(location);
         const tripPlan = new Tripplan({ userId, startDate, endDate, location, nameTrip }) // imageUrl
         await tripPlan.save();
-        for (const [planKey, planData] of Object.entries(jsonTrip)) {
-            for (const [dayKey, dayData] of Object.entries(planData)) {
-                const dayNumber = parseInt(dayKey.replace('day', ''));
-                const dayDate = new Date(startDate);
-                dayDate.setDate(dayDate.getDate() + dayNumber - 1);
-                const dayOfWeek = getDayOfWeek(dayDate.getDay());
-                const { title, transportCost, foodCost, google_maps_address } = dayData;
-                transportCostTotal += transportCost;
-                foodCostTotal += foodCost;
+        for (const [dayKey, dayData] of Object.entries(jsonTrip)) {
+            const dayNumber = parseInt(dayKey.replace('day', ''));
+            const dayDate = new Date(startDate);
+            dayDate.setDate(dayDate.getDate() + dayNumber - 1);
+            const dayOfWeek = getDayOfWeek(dayDate.getDay());
+            const { title, transportCost, foodCost, google_maps_address } = dayData;
+            transportCostTotal += transportCost;
+            foodCostTotal += foodCost;
 
-                // const imageUrlLocation = await getImagesFromLocation(google_maps_address);
-                const tripday = new TripDay({ tripId: tripPlan._id, day: dayNumber, title, dayOfWeek, date: dayDate, transportCost, foodCost, }); // imageUrlLocation
-                await tripday.save();
-                const activities = dayData.activities || [];
-                for (const challengeData of activities) {
-                    let { challenge_summary, google_maps_address, level_of_difficult } = challengeData;
-                    if (level_of_difficult == "Eazy" || level_of_difficult == "Dễ") {
-                        level_of_difficult = 10;
-                    }
-                    else if (level_of_difficult == "Normal" || level_of_difficult == "Trung bình") {
-                        level_of_difficult = 20;
-                    }
-                    else if (level_of_difficult == "Hard" || level_of_difficult == "Khó") {
-                        level_of_difficult = 30;
-                    }
-                    const challenge = new Challenge({ tripDayId: tripday._id, challengeSummary: challenge_summary, location: google_maps_address, points: level_of_difficult })
-                    await challenge.save();
-                    const userChallengeProgress = new UserChallengProgress({ userId: userId, chaId: challenge._id })
-                    await userChallengeProgress.save();
+            // const imageUrlLocation = await getImagesFromLocation(google_maps_address);
+            const tripday = new TripDay({ tripId: tripPlan._id, day: dayNumber, title, dayOfWeek, date: dayDate, transportCost, foodCost, }); // imageUrlLocation
+            await tripday.save();
+            const activities = dayData.activities || [];
+            for (const challengeData of activities) {
+                let { challenge_summary, google_maps_address, level_of_difficult } = challengeData;
+                if (level_of_difficult == "Eazy" || level_of_difficult == "Dễ") {
+                    level_of_difficult = 10;
                 }
+                else if (level_of_difficult == "Normal" || level_of_difficult == "Trung bình") {
+                    level_of_difficult = 20;
+                }
+                else if (level_of_difficult == "Hard" || level_of_difficult == "Khó") {
+                    level_of_difficult = 30;
+                }
+                const challenge = new Challenge({ tripDayId: tripday._id, challengeSummary: challenge_summary, location: google_maps_address, points: level_of_difficult })
+                await challenge.save();
+                const userChallengeProgress = new UserChallengProgress({ userId: userId, chaId: challenge._id })
+                await userChallengeProgress.save();
             }
         }
         tripPlan.transportCostTotal = transportCostTotal;
