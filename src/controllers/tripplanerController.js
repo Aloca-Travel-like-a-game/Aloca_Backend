@@ -88,13 +88,18 @@ const saveTripPlanner = async (req, res) => {
     try {
         const { jsonTrip, location, startDate, endDate, nameTrip } = req.body;
         const userId = req.userData._id;
+        console.log("start", startDate);
+        console.log("end", endDate);
         let transportCostTotal = 0;
         let foodCostTotal = 0;
         const getDataAllTrip = await Tripplan.find({ userId: userId });
         const tripWithSameName = getDataAllTrip.find(trip => trip.nameTrip === nameTrip);
+        console.log(tripWithSameName);
         if (tripWithSameName) {
             return res.status(400).json({ message: "A trip with the same name already exists" })
         }
+        console.log(startDate);
+        console.log(endDate);
         // const imageTripPlaceUrl = await getImagesFromLocation(location);
         const tripPlan = new Tripplan({ userId, startDate, endDate, location, nameTrip }) // imageUrl
         await tripPlan.save();
@@ -157,7 +162,9 @@ const getDetailTrip = async (req, res) => {
     try {
         const idTrip = req.params.id;
         const userId = req.userData._id;
+        console.log("id", idTrip);
         const dataTrip = await Tripplan.findOne({ _id: idTrip, userId: userId });
+        console.log(dataTrip);
         if (dataTrip.length === 0) {
             return res.status(401).json({ message: "Data Trip not found!" })
         }
@@ -167,10 +174,10 @@ const getDetailTrip = async (req, res) => {
             const challenges = await Challenge.find({ tripDayId: tripDay._id });
             const challengesWithStatus = await Promise.all(challenges.map(async (challenge) => {
                 const userChallengeProgress = await UserChallengProgress.findOne({ userId, chaId: challenge._id });
-                    return {
-                        ...challenge.toObject(),
-                        completed: userChallengeProgress.completed
-                    }
+                return {
+                    ...challenge.toObject(),
+                    completed: userChallengeProgress.completed
+                }
             }))
             const tripDayWithChallenges = {
                 ...tripDay.toObject(),
