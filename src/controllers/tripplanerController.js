@@ -51,10 +51,10 @@ const createTrip = async (req, res) => {
         plannb:{
         "daynb": {
         title:"biggest location",
-        "google_maps_address": string ADDRESS,
+        "google_maps_address": string MUST ADDRESS NOT URLSS,
         "activities": [
         challenges:[
-            {"challenge_summary": string, "google_maps_address": ADDRESS(string), "level_of_difficult":string}
+            {"challenge_summary": string, "google_maps_address": MUST ADDRESS NOT URL(string), "level_of_difficult":string}
         ],
         "transportCost": money (number),
         "foodCost": money (number)
@@ -90,10 +90,8 @@ const saveTripPlanner = async (req, res) => {
         const userId = req.userData._id;
         let transportCostTotal = 0;
         let foodCostTotal = 0;
-
         const getDataAllTrip = await Tripplan.find({ userId: userId });
-        const tripWithSameName = getDataAllTrip.find(trip => trip.name === newTripName);
-        console.log("f", tripWithSameName);
+        const tripWithSameName = getDataAllTrip.find(trip => trip.nameTrip === nameTrip);
         if (tripWithSameName) {
             return res.status(400).json({ message: "A trip with the same name already exists" })
         }
@@ -121,7 +119,6 @@ const saveTripPlanner = async (req, res) => {
                     }
                     else if (level_of_difficult == "Normal" || level_of_difficult == "Trung bình") {
                         level_of_difficult = 20;
-
                     }
                     else if (level_of_difficult == "Hard" || level_of_difficult == "Khó") {
                         level_of_difficult = 30;
@@ -136,7 +133,7 @@ const saveTripPlanner = async (req, res) => {
         tripPlan.transportCostTotal = transportCostTotal;
         tripPlan.foodCostTotal = foodCostTotal;
         await tripPlan.save();
-        return res.status(200).json({ message: "Trip plan saved successfully", chatId: tripPlan._id })
+        return res.status(200).json({ message: "Trip plan saved successfully", tripId: tripPlan._id })
     }
     catch (err) {
         console.log(err);
@@ -160,12 +157,28 @@ const getDetailTrip = async (req, res) => {
     try {
         const idTrip = req.params.id;
         const userId = req.userData._id;
-        const dataTrip = Tripplan.find({ _id: idTrip, userId: userId });
-        if (!dataTrip) {
+        const dataTrip = await Tripplan.findOne({ _id: idTrip, userId: userId });
+        if (dataTrip.length === 0) {
             return res.status(401).json({ message: "Data Trip not found!" })
         }
-        const dataTripDay = TripDay.find({ tripId: dataTrip._id });
-
+        const dataTripDays = await TripDay.find({ tripId: dataTrip._id });
+        let tripDatas = [];
+        for (const tripDay of dataTripDays) {
+            const challenges = await Challenge.find({ tripDayId: tripDay._id });
+            const challengesWithStatus = await Promise.all(challenges.map(async (challenge) => {
+                const userChallengeProgress = await UserChallengProgress.findOne({ userId, chaId: challenge._id });
+                    return {
+                        ...challenge.toObject(),
+                        completed: userChallengeProgress.completed
+                    }
+            }))
+            const tripDayWithChallenges = {
+                ...tripDay.toObject(),
+                challenges: challengesWithStatus
+            };
+            tripDatas.push(tripDayWithChallenges);
+        }
+        return res.status(200).json({ message: "Get Data Detail Trip Successfully", tripDatas })
     }
     catch (err) {
         console.log(err);
