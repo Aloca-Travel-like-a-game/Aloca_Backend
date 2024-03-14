@@ -47,7 +47,7 @@ const createTrip = async (req, res) => {
         - Số lượng người: ${numberOfPeople}
         - Ngân sách: ${budget} 
         - Sở thích: ${interest}
-        Bạn BẮT BUỘC phải tạo ra ít nhất 2 plan khác nhau (The amount for each plan required should be close to ${budget}) gồm ${numberOfDay} ngày và các giá tiền cần chi cho mỗi day(Tôi sống ở ${userLocation})? Vui lòng cho ra tất cả trong chuỗi JSON format, với từ khóa là
+        Bạn BẮT BUỘC phải tạo ra ít nhất 2 plan khác nhau (The amount for each plan required should be close to ${budget}) gồm ${numberOfDay} ngày và các giá tiền cần chi cho mỗi day? Vui lòng cho ra tất cả trong chuỗi JSON format, với từ khóa là
         plannb:{
         "daynb": {
         title:"biggest location",
@@ -61,7 +61,7 @@ const createTrip = async (req, res) => {
         ]}}
         THERE IS NO TEXT IN THE REPLY, ONLY JSON AND USING VIETNAMESE AND COMBINE TWO PLAN JSON STRINGS INTO A SINGLE JSON STRING`);
         const response = result.response.candidates;
-        const hasContent = response.some(item => item.content)
+        const hasContent = response.some(item => item.content);
         if (!hasContent) {
             return res.status(200).json({ message: "An error occurred while creating the trip plan, try again" })
         }

@@ -10,7 +10,6 @@ const checkAuthentication = async (req, res, next) => {
         const tokenArray = token.split(' ');
         const accessToken = tokenArray[1];
         const decoded = verifyAccessToken(accessToken);
-
         if (decoded.exp == true) {
             req.userId = decoded.userId;
             console.log("Your Access Token was expired");
