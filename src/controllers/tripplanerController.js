@@ -4,7 +4,7 @@ import { getDayOfWeek } from "../helper/travel.js";
 import { getImagesFromLocation } from "../helper/trip.js";
 import TripDay from "../models/tripDayModel.js";
 import Tripplan from "../models/tripplannerModel.js";
-import Challenge from "../models/challengeController.js";
+import Challenge from "../models/challengeModel.js";
 import UserChallengProgress from "../models/userChallengeProgressModel.js";
 configDotenv();
 
@@ -56,8 +56,8 @@ const createTrip = async (req, res) => {
         challenges:[
             {"challenge_summary": string, "google_maps_address": MUST ADDRESS NOT URL(string), "level_of_difficult":string}
         ],
-        "transportCost": money (number),
-        "foodCost": money (number)
+        "transportCost": money (ONLY NUMBER),
+        "foodCost": money (ONLY NUMBER)
         ]}}
         THERE IS NO TEXT IN THE REPLY, ONLY JSON AND USING VIETNAMESE AND COMBINE TWO PLAN JSON STRINGS INTO A SINGLE JSON STRING`);
         const response = result.response.candidates;
@@ -156,7 +156,7 @@ const getDetailTrip = async (req, res) => {
         const idTrip = req.params.id;
         const userId = req.userData._id;
         const dataTrip = await Tripplan.findOne({ _id: idTrip, userId: userId }).select("-userId");
-        if (dataTrip.length === 0) {
+        if (!dataTrip) {
             return res.status(401).json({ message: "Data Trip not found!" })
         }
 
@@ -185,6 +185,7 @@ const getDetailTrip = async (req, res) => {
         return res.status(500).send("Internal Server Error")
     }
 }
+
 export {
     createTrip,
     saveTripPlanner,
