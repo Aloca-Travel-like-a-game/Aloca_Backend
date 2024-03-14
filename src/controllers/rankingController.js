@@ -1,11 +1,13 @@
 import { configDotenv } from "dotenv";
+import Challenge from "../models/challengeModel.js";
 configDotenv();
 
 const rankPerMonth = async (req, res) => {
     try {
-        const {  } = req.body;
-        const dateNow = new Date();
-        
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth() + 1;
+        console.log(currentMonth);
+        const challenges = await Challenge.find({ $and: [{ month }] })
     }
     catch (err) {
         console.log(err);

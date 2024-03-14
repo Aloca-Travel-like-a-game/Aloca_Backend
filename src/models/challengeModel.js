@@ -6,7 +6,6 @@ const ChallengeSchema = mongoose.Schema({
     location: String,
     points: Number,
     imageUrl: String,
-    // createdAt: Date.now()
 })
 
 const Challenge = mongoose.model("Challenge", ChallengeSchema);
