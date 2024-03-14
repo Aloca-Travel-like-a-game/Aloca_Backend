@@ -3,9 +3,9 @@ configDotenv();
 
 const rankPerMonth = async (req, res) => {
     try {
-        const { typeRank, } = req.body;
-        const dateNow = Date.now;
-        console.log(dateNow);
+        const {  } = req.body;
+        const dateNow = new Date();
+        
     }
     catch (err) {
         console.log(err);

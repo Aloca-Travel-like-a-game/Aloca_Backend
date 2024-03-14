@@ -4,12 +4,12 @@ import checkRefreshToken from "./checkRefreshToken.js";
 const checkAuthentication = async (req, res, next) => {
     try {
         const token = req.headers.authorization;
-        const tokenArray = token.split(' ');
-        const accessToken = tokenArray[1];
-        const decoded = verifyAccessToken(accessToken);
         if (!token) {
             return res.status(401).send("Your token not found");
         }
+        const tokenArray = token.split(' ');
+        const accessToken = tokenArray[1];
+        const decoded = verifyAccessToken(accessToken);
 
         if (decoded.exp == true) {
             req.userId = decoded.userId;

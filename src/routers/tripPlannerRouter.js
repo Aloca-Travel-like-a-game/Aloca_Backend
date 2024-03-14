@@ -6,7 +6,7 @@ const router = Router();
 
 router.post("/", createTrip)
 router.post("/save-trip", checkAuthentication, saveTripPlanner)
-router.post("/get-trip", checkAuthentication, getTrip)
-router.post("/get-trip/:id", checkAuthentication, getDetailTrip)
+router.get("/get-trip", checkAuthentication, getTrip)
+router.get("/get-trip/:id", checkAuthentication, getDetailTrip)
 
 export default router;
