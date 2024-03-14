@@ -155,28 +155,28 @@ const getDetailTrip = async (req, res) => {
     try {
         const idTrip = req.params.id;
         const userId = req.userData._id;
-        console.log("id", idTrip);
-        const dataTrip = await Tripplan.findOne({ _id: idTrip, userId: userId });
-        console.log(dataTrip);
+        const dataTrip = await Tripplan.findOne({ _id: idTrip, userId: userId }).select("-userId");
         if (dataTrip.length === 0) {
             return res.status(401).json({ message: "Data Trip not found!" })
         }
-        const dataTripDays = await TripDay.find({ tripId: dataTrip._id });
-        let tripDatas = [];
-        for (const tripDay of dataTripDays) {
-            const challenges = await Challenge.find({ tripDayId: tripDay._id });
-            const challengesWithStatus = await Promise.all(challenges.map(async (challenge) => {
-                const userChallengeProgress = await UserChallengProgress.findOne({ userId, chaId: challenge._id });
+
+        const dataTripDays = await TripDay.find({ tripId: dataTrip._id }).select("-tripId -userId");
+        const tripDatas = {
+            ...dataTrip.toObject(),
+            dataTripDays: await Promise.all(dataTripDays.map(async (tripDay) => {
+                const challenges = await Challenge.find({ tripDayId: tripDay._id }).select("-tripId -tripDayId");
+                const challengesWithStatus = await Promise.all(challenges.map(async (challenge) => {
+                    const userChallengeProgress = await UserChallengProgress.findOne({ userId, chaId: challenge._id });
+                    return {
+                        ...challenge.toObject(),
+                        completed: userChallengeProgress.completed
+                    }
+                }));
                 return {
-                    ...challenge.toObject(),
-                    completed: userChallengeProgress.completed
+                    ...tripDay.toObject(),
+                    challenges: challengesWithStatus
                 }
             }))
-            const tripDayWithChallenges = {
-                ...tripDay.toObject(),
-                challenges: challengesWithStatus
-            };
-            tripDatas.push(tripDayWithChallenges);
         }
         return res.status(200).json({ message: "Get Data Detail Trip Successfully", tripDatas })
     }
@@ -185,7 +185,6 @@ const getDetailTrip = async (req, res) => {
         return res.status(500).send("Internal Server Error")
     }
 }
-
 export {
     createTrip,
     saveTripPlanner,
