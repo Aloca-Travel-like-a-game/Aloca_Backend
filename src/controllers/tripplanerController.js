@@ -10,8 +10,17 @@ configDotenv();
 
 const createTrip = async (req, res) => {
     try {
-        const { location, numberOfPeople, budget, interest, userLocation, numberOfDay } = req.body;
-
+        const { location, numberOfPeople, budget, interest, numberOfDay, startDate, endDate } = req.body;
+        const overlappingPlans = await Tripplan.find({
+            $or: [
+                { startDate: { $lte: endDate }, endDate: { $gte: startDate } },
+                { startDate: { $gte: startDate }, endDate: { $lte: endDate } }
+            ]
+        })
+        console.log(overlappingPlans);
+        if (overlappingPlans.length > 0) {
+            return res.status(400).json({ message: "Please choose another day. Your selected dates overlap with existing trip plans." });
+        }
         const genAI = new GoogleGenerativeAI(process.env.API_KEY_CHAT);
         const model = genAI.getGenerativeModel({ model: process.env.MODEL_NAME });
         const generationConfig = {
@@ -54,7 +63,7 @@ const createTrip = async (req, res) => {
         "google_maps_address": string MUST ADDRESS NOT URLSS,
         "activities": [
         challenges:[
-            {"challenge_summary": string, "google_maps_address": MUST ADDRESS NOT URL(string), "level_of_difficult":string}
+            {"challenge_summary": string, "google_maps_address": MUST ADDRESS NOT URL(string), "level_of_difficult":number (from 1 to 100)}
         ],
         "transportCost": money (ONLY NUMBER),
         "foodCost": money (ONLY NUMBER)
@@ -101,7 +110,7 @@ const saveTripPlanner = async (req, res) => {
         for (const [dayKey, dayData] of Object.entries(jsonTrip)) {
             const dayNumber = parseInt(dayKey.replace('day', ''));
             const dayDate = new Date(startDate);
-            dayDate.setDate(dayDate.getDate() + dayNumber - 1);
+            dayDate.setDate(dayDate.getDate() + dayNumber);
             const dayOfWeek = getDayOfWeek(dayDate.getDay());
             const { title, transportCost, foodCost, google_maps_address } = dayData;
             transportCostTotal += transportCost;
@@ -113,15 +122,6 @@ const saveTripPlanner = async (req, res) => {
             const activities = dayData.activities || [];
             for (const challengeData of activities) {
                 let { challenge_summary, google_maps_address, level_of_difficult } = challengeData;
-                if (level_of_difficult == "Eazy" || level_of_difficult == "Dễ") {
-                    level_of_difficult = 10;
-                }
-                else if (level_of_difficult == "Normal" || level_of_difficult == "Trung bình") {
-                    level_of_difficult = 20;
-                }
-                else if (level_of_difficult == "Hard" || level_of_difficult == "Khó") {
-                    level_of_difficult = 30;
-                }
                 const challenge = new Challenge({ tripDayId: tripday._id, challengeSummary: challenge_summary, location: google_maps_address, points: level_of_difficult })
                 await challenge.save();
                 const userChallengeProgress = new UserChallengProgress({ userId: userId, chaId: challenge._id })

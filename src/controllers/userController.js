@@ -1,4 +1,5 @@
 import User from "../models/userModel.js";
+
 const updateProfile = async (req, res) => {
     try {
         const { fullname, email, phone, address, image } = req.body;
@@ -17,5 +18,17 @@ const updateProfile = async (req, res) => {
         return res.status(500).json({ message: "Internal Server Error" });
     }
 }
+const deleteAcount = async (req, res) => {
+    try {
+        const userId = req.userData._id;
 
-export { updateProfile };
+        await User.findByIdAndUpdate(userId, { isActive: "delete" })
+        return res.status(200).json({ message: "Delete Acount successfully" })
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+}
+
+export { updateProfile, deleteAcount };
