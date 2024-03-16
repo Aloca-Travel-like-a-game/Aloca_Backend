@@ -96,6 +96,8 @@ const createTrip = async (req, res) => {
 const saveTripPlanner = async (req, res) => {
     try {
         const { jsonTrip, location, startDate, endDate, nameTrip } = req.body;
+        console.log(startDate);
+        console.log(location);
         const userId = req.userData._id;
         let transportCostTotal = 0;
         let foodCostTotal = 0;

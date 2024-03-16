@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 
 const TripPlannerSchema = mongoose.Schema({
     userId: { type: mongoose.Schema.ObjectId, ref: "User" },
-    statDate: Date,
+    startDate: Date,
     endDate: Date,
-    locatrion: String,
+    location: String,
     imageUrl: String,
     transportCostTotal: Number,
     foodCostTotal: Number,
