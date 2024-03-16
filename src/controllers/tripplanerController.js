@@ -14,7 +14,7 @@ const createTrip = async (req, res) => {
         const overlappingPlans = await Tripplan.find({
             $or: [
                 { startDate: { $lte: endDate }, endDate: { $gte: startDate } },
-                { startDate: { $gte: startDate }, endDate: { $lte: endDate } }
+                { endDate: { $gte: startDate }, endDate: { $lte: endDate } }
             ]
         })
         console.log(overlappingPlans);
