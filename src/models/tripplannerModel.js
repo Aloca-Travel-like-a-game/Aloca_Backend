@@ -8,7 +8,8 @@ const TripPlannerSchema = mongoose.Schema({
     imageUrl: String,
     transportCostTotal: Number,
     foodCostTotal: Number,
-    nameTrip: String
+    nameTrip: String,
+    status: { type: String, default: "active" }
 })
 
 const Tripplan = mongoose.model("Tripplan", TripPlannerSchema);

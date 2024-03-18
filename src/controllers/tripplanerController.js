@@ -144,7 +144,8 @@ const saveTripPlanner = async (req, res) => {
 const getTrip = async (req, res) => {
     try {
         const userId = req.userData._id;
-        const dataTrip = await Tripplan.find({ userId: userId });
+        const dataTrip = await Tripplan.find({ userId: userId, status: { $ne: "delete" } });
+
         return res.status(200).json({ message: "Get Trip Successfully", dataTrip })
     }
     catch (err) {
@@ -158,7 +159,7 @@ const getDetailTrip = async (req, res) => {
         const idTrip = req.params.id;
         const userId = req.userData._id;
         const dataTrip = await Tripplan.findOne({ _id: idTrip, userId: userId }).select("-userId");
-        if (!dataTrip) {
+        if (!dataTrip || dataTrip.status == "delete") {
             return res.status(401).json({ message: "Data Trip not found!" })
         }
 
@@ -188,9 +189,26 @@ const getDetailTrip = async (req, res) => {
     }
 }
 
+const deleteTrip = async (req, res) => {
+    try {
+        const userId = req.userData._id;
+        const tripId = req.params.id;
+        const deleteTrip = Tripplan.findAndUpdate(
+            { _id: tripId, userId: userId },
+            { $set: { status: "delete" } },
+            { new: true })
+        if (!deleteTrip) {
+            return res.status(404).json({ message: "Trip not found or unauthorized" });
+        }
+        return res.status(200).json({ message: "Trip deleted successfully" });
+    } catch (error) {
+
+    }
+}
 export {
     createTrip,
     saveTripPlanner,
     getTrip,
-    getDetailTrip
+    getDetailTrip,
+    deleteTrip
 }
