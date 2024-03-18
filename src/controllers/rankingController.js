@@ -54,7 +54,7 @@ const rankPerMonth = async (req, res) => {
             }
         ])
 
-        return res.status(200).json({ message: "Get Ranking Per Month Successfully", dataRankingPerMonth })
+        return res.status(200).json({ message: "Get Ranking Per Month Successfully", dataRanks: dataRankingPerMonth })
     }
     catch (err) {
         console.log(err);
@@ -113,7 +113,7 @@ const rankPerWeek = async (req, res) => {
             }
         ])
 
-        return res.status(200).json({ message: "Get Ranking Per Week Successfully", dataRankingPerWeek })
+        return res.status(200).json({ message: "Get Ranking Per Week Successfully", dataRanks: dataRankingPerWeek })
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: "Internal Servel Error!" });
@@ -140,7 +140,7 @@ const rankingUserHighest = async (req, res) => {
                 }
             }
         ])
-        return res.status(200).json({ message: "Get the Highest Ranking User Successfully", dataRankingUserHighest })
+        return res.status(200).json({ message: "Get the Highest Ranking User Successfully", dataRanks: dataRankingUserHighest })
 
     } catch (error) {
         console.log(error);
