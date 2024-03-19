@@ -193,7 +193,7 @@ const deleteTrip = async (req, res) => {
     try {
         const userId = req.userData._id;
         const tripId = req.params.id;
-        const deleteTrip = Tripplan.findAndUpdate(
+        const deleteTrip = Tripplan.findOneAndUpdate(
             { _id: tripId, userId: userId },
             { $set: { status: "delete" } },
             { new: true })
