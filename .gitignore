@@ -3,3 +3,5 @@
 package-lock.json
 
 aloca-ec2.pem
+
+serverviceAccountKey.json
