@@ -193,10 +193,12 @@ const deleteTrip = async (req, res) => {
     try {
         const userId = req.userData._id;
         const tripId = req.params.id;
-        const deleteTrip = Tripplan.findOneAndUpdate(
+
+        const deleteTrip = await Tripplan.findOneAndUpdate(
             { _id: tripId, userId: userId },
             { $set: { status: "delete" } },
             { new: true })
+        console.log(deleteTrip);
         if (!deleteTrip) {
             return res.status(404).json({ message: "Trip not found or unauthorized" });
         }
