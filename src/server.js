@@ -5,6 +5,7 @@ import connect from "./config/db/mongoose.js";
 import route from "./routers/index.js";
 import bodyParser from "body-parser";
 import morgan from "morgan";
+import { firebase } from "./firebase/index.js";
 configDotenv();
 connect();
 
@@ -29,6 +30,7 @@ const sendNotification = async () => {
 setTimeout(() => {
     sendNotification();
 }, 2000);
+
 route(server)
 server.listen(process.env.PORT, () => {
     console.log(`Listening at ${process.env.PORT}`);
