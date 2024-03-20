@@ -52,6 +52,7 @@ const runChat = async (req, res) => {
             if (checkNewChat == false) {
                 const responses = await Response.find({ chatAiId: chatAi._id });
                 const questions = await Question.find({ chatAiId: chatAi._id });
+                console.log(questions);
                 if (responses.length != 0 && questions != 0) {
                     let mergedArray = [
                         ...questions.map((question) => ({ role: "user", parts: question.content, createdAt: question.createdAt })),
@@ -62,7 +63,6 @@ const runChat = async (req, res) => {
                     history = resultArray
                 }
             }
-            return res.status(200).json({ history })
             const chat = model.startChat({
                 generationConfig,
                 safetySettings,
