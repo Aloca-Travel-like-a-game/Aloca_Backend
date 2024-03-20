@@ -58,7 +58,7 @@ const runChat = async (req, res) => {
                         ...questions.map((question) => ({ role: "user", parts: question.content, createdAt: question.createdAt }))
                     ];
                     mergedArray.sort((a, b) => a.createdAt - b.createdAt);
-                    console.log(mergedArray);
+                    console.log("mer", mergedArray);
                     let resultArray = mergedArray.map((res) => ({ role: res.role, parts: res.parts }));
                     history = resultArray
                 }
@@ -70,9 +70,13 @@ const runChat = async (req, res) => {
             });
 
             const result = await chat.sendMessage(message);
-            const response = result.response.candidates;
+            const response = result;
             console.log("res", response);
-            const hasContent = response.some(item => item.content)
+            if (!response) {
+                return res.status(200).json({ message: "Đã xảy ra lỗi trong quá trình gửi tin nhắn, thử lại", chatAi })
+            }
+            const dataChat = response.response.candidates
+            const hasContent = dataChat.some(item => item.content)
             if (!hasContent) {
                 return res.status(200).json({ message: "Đã xảy ra lỗi trong quá trình gửi tin nhắn, thử lại", chatAi })
             }

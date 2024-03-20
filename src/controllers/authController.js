@@ -67,9 +67,7 @@ const confirmAccount = async (req, res) => {
 const login = async (req, res) => {
     try {
         const { username, password, fcwToken } = req.body;
-        console.log(username);
         const checkAccount = await User.findOne({ username })
-        console.log(checkAccount);
         if (!checkAccount) {
             return res.status(404).json({ message: "The account is not registered" })
         }
