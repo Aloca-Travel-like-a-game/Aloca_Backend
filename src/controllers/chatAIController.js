@@ -70,6 +70,7 @@ const runChat = async (req, res) => {
 
             const result = await chat.sendMessage(message);
             const response = result.response.candidates;
+            console.log("res",response);
             const hasContent = response.some(item => item.content)
             if (!hasContent) {
                 return res.status(200).json({ message: "Đã xảy ra lỗi trong quá trình gửi tin nhắn, thử lại", chatAi })
