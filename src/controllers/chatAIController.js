@@ -58,6 +58,7 @@ const runChat = async (req, res) => {
                         ...questions.map((question) => ({ role: "user", parts: question.content, createdAt: question.createdAt }))
                     ];
                     mergedArray.sort((a, b) => a.createdAt - b.createdAt);
+                    console.log(mergedArray);
                     let resultArray = mergedArray.map((res) => ({ role: res.role, parts: res.parts }));
                     history = resultArray
                 }
