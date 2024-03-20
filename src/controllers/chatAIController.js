@@ -59,7 +59,7 @@ const runChat = async (req, res) => {
                     ];
                     mergedArray.sort((a, b) => a.createdAt - b.createdAt);
                     let resultArray = mergedArray.map((res) => ({ role: res.role, parts: res.parts }));
-                    history = resultArray
+                    history = resultArrayww
                 }
             }
             const chat = model.startChat({
@@ -70,7 +70,7 @@ const runChat = async (req, res) => {
 
             const result = await chat.sendMessage(message);
             const response = result.response.candidates;
-            console.log("res",response);
+            console.log("res", response);
             const hasContent = response.some(item => item.content)
             if (!hasContent) {
                 return res.status(200).json({ message: "Đã xảy ra lỗi trong quá trình gửi tin nhắn, thử lại", chatAi })

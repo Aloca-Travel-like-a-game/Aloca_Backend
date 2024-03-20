@@ -54,7 +54,7 @@ const createTrip = async (req, res) => {
         const result = await chat.sendMessage(`
         - Địa điểm:${location}
         - Số lượng người: ${numberOfPeople}
-        - Ngân sách: ${budget} 
+        - Ngân sách cho MỖI NGƯỜI: ${budget} 
         - Sở thích: ${interest}
         - Tôi hiện tại sống ở: ${userLocation}
         Bạn BẮT BUỘC phải tạo ra ít nhất 2 plan khác nhau (The amount for each plan required should be close to ${budget}) gồm ${numberOfDay} ngày và các giá tiền cần chi cho mỗi day? Vui lòng cho ra tất cả trong chuỗi JSON format, với từ khóa là
