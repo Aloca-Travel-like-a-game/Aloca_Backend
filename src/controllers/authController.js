@@ -85,7 +85,8 @@ const login = async (req, res) => {
         }
 
         if (!!fcwToken) {
-            checkAccount.fcmTok
+            checkAccount.fcmToken = fcwToken;
+            checkAccount.save()
         }
 
         if (checkAccount && validPassword) {

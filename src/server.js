@@ -16,7 +16,7 @@ server.use(morgan());
 // const sendNotification = async () => {
 //     try {
 //         await firebase.messaging().send({
-//             token: "e52m1qpHSParXuBGIczJH9:APA91bGZMpjVMTQjBf_HDWUP16QW7-Jx40FCxokXUS5ecryC443MYlLuwfKoiMmRcGcmqqElRNPfmc3HA1fzcZjLGyyXiNBkk6WEjysKn8uq4Cz40TNIDodtpvN4xLdLmMNKjs-Ijubf",
+//             token: "e1SplqtlTXeKVCGIR-fHtk:APA91bH75TQP3Ds5mAMWZEWizEzfoeT6mbSYaULFY7sfNR3FmgyZ0qd7CunB9SDNSkj0bTVgC9iJE5XJVYSH9SWDy03wN0uiGMLT_9O5CuoVub5aM9WZ731-7o9slcW8VbNeOuv0JqRR",
 //             notification: {
 //                 title: "khanh",
 //                 body: "khanhdeptrai"
