@@ -10,7 +10,7 @@ configDotenv();
 
 const createTrip = async (req, res) => {
     try {
-        const { location, numberOfPeople, budget, interest, numberOfDay, startDate, endDate } = req.body;
+        const { location, numberOfPeople, budget, interest, numberOfDay, startDate, endDate, userLocation } = req.body;
         const overlappingPlans = await Tripplan.find({
             $or: [
                 { startDate: { $lte: endDate }, endDate: { $gte: startDate } },
@@ -56,11 +56,12 @@ const createTrip = async (req, res) => {
         - Số lượng người: ${numberOfPeople}
         - Ngân sách: ${budget} 
         - Sở thích: ${interest}
+        - Tôi hiện tại sống ở: ${userLocation}
         Bạn BẮT BUỘC phải tạo ra ít nhất 2 plan khác nhau (The amount for each plan required should be close to ${budget}) gồm ${numberOfDay} ngày và các giá tiền cần chi cho mỗi day? Vui lòng cho ra tất cả trong chuỗi JSON format, với từ khóa là
         plannb:{
         "daynb": {
         title:"biggest location",
-        "google_maps_address": string MUST ADDRESS NOT URLSS,
+        "google_maps_address": string MUST ADDRESS NOT URL,
         "activities": [
         challenges:[
             {"challenge_summary": string, "google_maps_address": MUST ADDRESS NOT URL(string), "level_of_difficult":number (from 1 to 100)}

@@ -27,6 +27,7 @@ const sendNotification = async () => {
         console.log("send fail", error);
     }
 }
+
 setTimeout(() => {
     sendNotification();
 }, 2000);

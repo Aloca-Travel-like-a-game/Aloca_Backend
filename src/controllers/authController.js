@@ -30,7 +30,7 @@ const register = async (req, res) => {
         const verificationCode = generateVerificationCode();
         const hashedPassword = await bcrypt.hash(password, 10);
         sendVerificationCodeEmail(email, verificationCode);
-        const newUser = new User({username, email, password: hashedPassword, code: verificationCode })
+        const newUser = new User({ username, email, password: hashedPassword, code: verificationCode })
         await newUser.save();
 
         return res.status(200).json({
@@ -66,8 +66,10 @@ const confirmAccount = async (req, res) => {
 
 const login = async (req, res) => {
     try {
-        const { username, password } = req.body;
+        const { username, password, fcwToken } = req.body;
+        console.log(username);
         const checkAccount = await User.findOne({ username })
+        console.log(checkAccount);
         if (!checkAccount) {
             return res.status(404).json({ message: "The account is not registered" })
         }
@@ -83,6 +85,11 @@ const login = async (req, res) => {
         if (!validPassword) {
             return res.status(401).json({ message: "Incorrect password" });
         }
+
+        if (!!fcwToken) {
+            checkAccount.fcmTok
+        }
+
         if (checkAccount && validPassword) {
             const accessToken = generateAccessToken(checkAccount);
             const refreshToken = generateRefreshToken(checkAccount);
