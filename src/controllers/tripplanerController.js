@@ -54,10 +54,10 @@ const createTrip = async (req, res) => {
         const result = await chat.sendMessage(`
         - Địa điểm:${location}
         - Số lượng người: ${numberOfPeople}
-        - Ngân sách cho MỖI NGƯỜI: ${budget} 
+        - Ngân sách: ${budget} 
         - Sở thích: ${interest}
         - Tôi hiện tại sống ở: ${userLocation}
-        Bạn BẮT BUỘC phải tạo ra ít nhất 2 plan khác nhau (The amount for each plan required should be close to ${budget}) gồm ${numberOfDay} ngày và các giá tiền cần chi cho mỗi day? Vui lòng cho ra tất cả trong chuỗi JSON format, với từ khóa là
+        Bạn BẮT BUỘC phải tạo ra ít nhất 2 plan khác nhau (The amount for each plan required should be close to ${budget}) gồm ${numberOfDay} ngày và với số lượng người ${numberOfPeople}? Vui lòng cho ra tất cả trong chuỗi JSON format, với từ khóa là
         plannb:{
         "daynb": {
         title:"biggest location",
@@ -76,7 +76,6 @@ const createTrip = async (req, res) => {
             return res.status(200).json({ message: "An error occurred while creating the trip plan, try again" })
         }
         let TripResponse = response[0].content.parts[0].text;
-        console.log(TripResponse);
         let jsonData;
         const startIndex = TripResponse.indexOf('{');
         const endIndex = TripResponse.lastIndexOf('}') + 1;

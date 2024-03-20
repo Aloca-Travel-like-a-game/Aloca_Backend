@@ -9,6 +9,7 @@ const UserSchema = mongoose.Schema({
     },
     fullname: String,
     address: String,
+    fcmToken: String,
     email: {
         type: String,
         required: [true, "Email is required field!"],

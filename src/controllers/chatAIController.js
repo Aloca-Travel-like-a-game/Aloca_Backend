@@ -54,14 +54,15 @@ const runChat = async (req, res) => {
                 const questions = await Question.find({ chatAiId: chatAi._id });
                 if (responses.length != 0 && questions != 0) {
                     let mergedArray = [
-                        ...responses.map((response) => ({ role: "model", parts: response.content, createdAt: response.createdAt })),
-                        ...questions.map((question) => ({ role: "user", parts: question.content, createdAt: question.createdAt }))
+                        ...questions.map((question) => ({ role: "user", parts: question.content, createdAt: question.createdAt })),
+                        ...responses.map((response) => ({ role: "model", parts: response.content, createdAt: response.createdAt }))
                     ];
                     mergedArray.sort((a, b) => a.createdAt - b.createdAt);
                     let resultArray = mergedArray.map((res) => ({ role: res.role, parts: res.parts }));
                     history = resultArray
                 }
             }
+            return res.status(200).json({ history })
             const chat = model.startChat({
                 generationConfig,
                 safetySettings,
