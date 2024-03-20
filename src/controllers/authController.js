@@ -67,6 +67,7 @@ const confirmAccount = async (req, res) => {
 const login = async (req, res) => {
     try {
         const { username, password, fcwToken } = req.body;
+        console.log("token", fcwToken);
         const checkAccount = await User.findOne({ username })
         if (!checkAccount) {
             return res.status(404).json({ message: "The account is not registered" })
@@ -84,9 +85,9 @@ const login = async (req, res) => {
             return res.status(401).json({ message: "Incorrect password" });
         }
 
-        if (!!fcwToken) {
+        if (fcwToken !== undefined && fcwToken !== null) {
             checkAccount.fcmToken = fcwToken;
-            checkAccount.save()
+            checkAccount.save();
         }
 
         if (checkAccount && validPassword) {
