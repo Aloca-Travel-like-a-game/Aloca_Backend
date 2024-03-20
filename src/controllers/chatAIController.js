@@ -59,7 +59,7 @@ const runChat = async (req, res) => {
                     ];
                     mergedArray.sort((a, b) => a.createdAt - b.createdAt);
                     let resultArray = mergedArray.map((res) => ({ role: res.role, parts: res.parts }));
-                    history = resultArrayww
+                    history = resultArray
                 }
             }
             const chat = model.startChat({
