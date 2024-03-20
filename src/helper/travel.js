@@ -1,5 +1,7 @@
 const getTravelKeywords = () => {
     const keywordsData = [
+        "gia",
+        "giá",
         "mùa",
         "nơi",
         "tốn",
