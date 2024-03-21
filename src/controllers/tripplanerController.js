@@ -208,6 +208,7 @@ const deleteTrip = async (req, res) => {
 
     }
 }
+
 export {
     createTrip,
     saveTripPlanner,

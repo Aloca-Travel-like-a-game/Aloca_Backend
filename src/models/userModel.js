@@ -25,7 +25,7 @@ const UserSchema = mongoose.Schema({
         default: "https://png.pngtree.com/thumb_back/fh260/background/20210915/pngtree-geometric-pattern-white-gold-minimalist-creative-background-image_879782.jpg"
     },
     phone: {
-        type: Number
+        type: String
     },
     city: { type: String },
     level: {
