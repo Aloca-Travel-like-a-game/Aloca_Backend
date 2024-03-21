@@ -26,9 +26,9 @@ const runChat = async (req, res) => {
             const genAI = new GoogleGenerativeAI(process.env.API_KEY_CHAT);
             const model = genAI.getGenerativeModel({ model: process.env.MODEL_NAME });
             const generationConfig = {
-                temperature: 0.9,
-                topK: 1,
-                topP: 1,
+                temperature: 1.5,
+                topK: 20,
+                topP: 0.5,
                 maxOutputTokens: 2048,
             };
             const safetySettings = [
