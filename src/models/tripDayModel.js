@@ -8,7 +8,8 @@ const TripDaySchema = mongoose.Schema({
     date: Date,
     title: String,
     transportCost: Number,
-    foodCost: Number
+    foodCost: Number,
+    otherCost: Number
 })
 
 const TripDay = mongoose.model("TripDay", TripDaySchema);

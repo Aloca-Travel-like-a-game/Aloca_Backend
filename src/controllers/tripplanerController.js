@@ -17,7 +17,6 @@ const createTrip = async (req, res) => {
                 { startDate: { $gte: startDate }, endDate: { $lte: endDate } }
             ]
         })
-        console.log(overlappingPlans);
         if (overlappingPlans.length > 0) {
             return res.status(400).json({ message: "Please choose another day. Your selected dates overlap with existing trip plans." });
         }
@@ -27,7 +26,7 @@ const createTrip = async (req, res) => {
             temperature: 1.5,
             topK: 20,
             topP: 0.5,
-            maxOutputTokens: 9548,
+            maxOutputTokens: 11348,
         };
         const safetySettings = [
             {
@@ -57,7 +56,7 @@ const createTrip = async (req, res) => {
         - Ngân sách: ${budget} 
         - Sở thích: ${interest}
         - Tôi hiện tại sống ở: ${userLocation}
-        Bạn BẮT BUỘC phải tạo ra ít nhất 2 plan khác nhau (The amount for each plan required should be close to ${budget}) gồm ${numberOfDay} ngày và với số lượng người ${numberOfPeople}? Vui lòng cho ra tất cả trong chuỗi JSON format, với từ khóa là
+        Bạn BẮT BUỘC phải tạo ra ít nhất 2 plan khác trên 50% nhau (The amount for each plan MUST BE APPORXIMATELY ${budget}) và gồm có ĐẦY ĐỦ ${numberOfDay} ngày và với số lượng người ${numberOfPeople}? Vui lòng cho ra tất cả trong chuỗi JSON format, với từ khóa là
         plannb:{
         "daynb": {
         title:"biggest location",
@@ -66,9 +65,9 @@ const createTrip = async (req, res) => {
         challenges:[
             {"challenge_summary": string, "google_maps_address": MUST ADDRESS NOT URL(string), "level_of_difficult":number (from 1 to 100)}
         ],
-        "transportCost": money (ONLY NUMBER),
-        "foodCost": money (ONLY NUMBER),
-        "otherCost":money(ONLY NUMBER)
+        "transportCost": money (ONLY NUMBER) MUST HAVE, 
+        "foodCost": money (ONLY NUMBER) MUST HAVE,
+        "otherCost":money(ONLY NUMBER) MUST HAVE
         ]}}
         THERE IS NO TEXT IN THE REPLY, ONLY JSON AND USING VIETNAMESE AND COMBINE TWO PLAN JSON STRINGS INTO A SINGLE JSON STRING`);
         const response = result.response.candidates;
@@ -97,11 +96,10 @@ const createTrip = async (req, res) => {
 const saveTripPlanner = async (req, res) => {
     try {
         const { jsonTrip, location, startDate, endDate, nameTrip } = req.body;
-        console.log(startDate);
-        console.log(location);
         const userId = req.userData._id;
         let transportCostTotal = 0;
         let foodCostTotal = 0;
+        let otherCostTotal = 0;
         const getDataAllTrip = await Tripplan.find({ userId: userId });
         const tripWithSameName = getDataAllTrip.find(trip => trip.nameTrip === nameTrip);
         if (tripWithSameName) {
@@ -115,12 +113,13 @@ const saveTripPlanner = async (req, res) => {
             const dayDate = new Date(startDate);
             dayDate.setDate(dayDate.getDate() + dayNumber);
             const dayOfWeek = getDayOfWeek(dayDate.getDay());
-            const { title, transportCost, foodCost, google_maps_address } = dayData;
+            const { title, transportCost, foodCost, otherCost, google_maps_address } = dayData;
             transportCostTotal += transportCost;
             foodCostTotal += foodCost;
+            otherCostTotal += otherCost;
 
             // const imageUrlLocation = await getImagesFromLocation(google_maps_address);
-            const tripday = new TripDay({ tripId: tripPlan._id, day: dayNumber, title, dayOfWeek, date: dayDate, transportCost, foodCost, }); // imageUrlLocation
+            const tripday = new TripDay({ tripId: tripPlan._id, day: dayNumber, title, dayOfWeek, date: dayDate, transportCost, foodCost, otherCost }); // imageUrlLocation
             await tripday.save();
             const activities = dayData.activities || [];
             for (const challengeData of activities) {
@@ -133,6 +132,7 @@ const saveTripPlanner = async (req, res) => {
         }
         tripPlan.transportCostTotal = transportCostTotal;
         tripPlan.foodCostTotal = foodCostTotal;
+        tripPlan.otherCostTotal = otherCostTotal;
         await tripPlan.save();
         return res.status(200).json({ message: "Trip plan saved successfully", tripId: tripPlan._id })
     }
