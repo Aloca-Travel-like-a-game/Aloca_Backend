@@ -14,8 +14,8 @@ const geocoder = NodeGeocoder({
 const checkChallengeProgress = async (req, res) => {
     try {
         const { lat, lng, chaId } = req.body;
-        const challenge = await Challenge.findById(chaId);
-        const locationChallenge = challenge.location;
+        // const challenge = await Challenge.findById(chaId);
+        // // const locationChallenge = challenge.location;
         // const resLocationChanllenge = await geocoder.geocode(locationChallenge);
         // if (resLocationChanllenge && resLocationChanllenge.length > 0) {
         //     const langtitude = resLocationChanllenge[0].latitude;
