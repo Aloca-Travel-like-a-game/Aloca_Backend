@@ -23,10 +23,10 @@ const createTrip = async (req, res) => {
         const genAI = new GoogleGenerativeAI(process.env.API_KEY_CHAT);
         const model = genAI.getGenerativeModel({ model: process.env.MODEL_NAME });
         const generationConfig = {
-            temperature: 1.5,
-            topK: 20,
-            topP: 0.5,
-            maxOutputTokens: 11348,
+            temperature: 1.0,
+            topK: 30,
+            topP: 0.7,
+            maxOutputTokens: 14348,
         };
         const safetySettings = [
             {
@@ -56,19 +56,20 @@ const createTrip = async (req, res) => {
         - Ngân sách: ${budget} 
         - Sở thích: ${interest}
         - Tôi hiện tại sống ở: ${userLocation}
-        Bạn BẮT BUỘC phải tạo ra ít nhất 2 plan khác trên 50% nhau (The amount for each plan MUST BE APPORXIMATELY ${budget}) và gồm có ĐẦY ĐỦ ${numberOfDay} ngày và với số lượng người ${numberOfPeople}? Vui lòng cho ra tất cả trong chuỗi JSON format, với từ khóa là
+        BẮT BUỘC phải tạo ra ít nhất 1 plan và SỐ TIỀN TỔNG CHI PHÍ CỦA PLAN NÓ TRONG KHOẢNG ${budget} và có ĐẦY ĐỦ ${numberOfDay} ngày? Vui lòng cho ra tất cả trong chuỗi JSON format, với từ khóa là
         plannb:{
         "daynb": {
         title:"biggest location",
-        "google_maps_address": string MUST ADDRESS NOT URL,
         "activities": [
-        challenges:[
-            {"challenge_summary": string, "google_maps_address": MUST ADDRESS NOT URL(string), "level_of_difficult":number (from 1 to 100)}
-        ],
-        "transportCost": money (ONLY NUMBER) MUST HAVE, 
-        "foodCost": money (ONLY NUMBER) MUST HAVE,
-        "otherCost":money(ONLY NUMBER) MUST HAVE
-        ]}}
+            {"challenge_summary": string,
+            "google_maps_address": MUST ADDRESS NOT URL(string), 
+            "latitude": (string), 
+            "longitude":(string), 
+            "level_of_difficult":number (from 1 to 100)}],
+        "transportCost": money(NUMBER)(MUST BE GREATER THAN 0),
+        "foodCost": money(NUMBER)(MUST BE GREATER THAN 0),
+        "otherCost":money(NUMBER)(MUST BE GREATER THAN 0),
+        }}
         THERE IS NO TEXT IN THE REPLY, ONLY JSON AND USING VIETNAMESE AND COMBINE TWO PLAN JSON STRINGS INTO A SINGLE JSON STRING`);
         const response = result.response.candidates;
         const hasContent = response.some(item => item.content);
@@ -76,6 +77,7 @@ const createTrip = async (req, res) => {
             return res.status(200).json({ message: "An error occurred while creating the trip plan, try again" })
         }
         let TripResponse = response[0].content.parts[0].text;
+        console.log("trip", TripResponse);
         let jsonData;
         const startIndex = TripResponse.indexOf('{');
         const endIndex = TripResponse.lastIndexOf('}') + 1;
@@ -113,18 +115,18 @@ const saveTripPlanner = async (req, res) => {
             const dayDate = new Date(startDate);
             dayDate.setDate(dayDate.getDate() + dayNumber);
             const dayOfWeek = getDayOfWeek(dayDate.getDay());
-            const { title, transportCost, foodCost, otherCost, google_maps_address } = dayData;
+            const { title, google_maps_address, transportCost, foodCost, otherCost } = dayData;
             transportCostTotal += transportCost;
             foodCostTotal += foodCost;
             otherCostTotal += otherCost;
 
             // const imageUrlLocation = await getImagesFromLocation(google_maps_address);
-            const tripday = new TripDay({ tripId: tripPlan._id, day: dayNumber, title, dayOfWeek, date: dayDate, transportCost, foodCost, otherCost }); // imageUrlLocation
+            const tripday = new TripDay({ tripId: tripPlan._id, day: dayNumber, title, dayOfWeek, date: dayDate, transportCost, foodCost, otherCost, }); // imageUrlLocation
             await tripday.save();
             const activities = dayData.activities || [];
             for (const challengeData of activities) {
-                let { challenge_summary, google_maps_address, level_of_difficult } = challengeData;
-                const challenge = new Challenge({ tripDayId: tripday._id, challengeSummary: challenge_summary, location: google_maps_address, points: level_of_difficult })
+                let { challenge_summary, google_maps_address, level_of_difficult, latitude, longitude } = challengeData;
+                const challenge = new Challenge({ tripDayId: tripday._id, challengeSummary: challenge_summary, location: google_maps_address, points: level_of_difficult, latitude, longitude })
                 await challenge.save();
                 const userChallengeProgress = new UserChallengProgress({ userId: userId, chaId: challenge._id })
                 await userChallengeProgress.save();
