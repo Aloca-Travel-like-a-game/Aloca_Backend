@@ -38,7 +38,7 @@ const checkChallengeProgress = async (req, res) => {
         // if (!imageURI) {
         //     return res.status(400).json({ message: "No image updoaded" })
         // }
-        return res.status(200).json({ message: "Complete the challenge", distance })
+        return res.status(200).json({ message: "Complete the challenge" })
     } catch (err) {
         console.log(err);
         return res.status(500).json({ message: "Internal Server Error" });
