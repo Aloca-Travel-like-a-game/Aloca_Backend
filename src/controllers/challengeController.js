@@ -16,12 +16,12 @@ const checkChallengeProgress = async (req, res) => {
         const metadata = {
             contentType: fileBlob.type
         };
-        const blob = await fileBlob.blob();
-        console.log(blob);
-        const arrayBuffer = await new Response(blob).arrayBuffer();
+        const arrayBuffer = await fileBlob.arrayBuffer();
+        const imageContent = Buffer.from(arrayBuffer);
+        // const arrayBuffer = await new Response(blob).arrayBuffer();
 
         const fileRef = ref(storage, fileName);
-        await uploadBytes(fileRef, arrayBuffer, metadata);
+        await uploadBytes(fileRef, imageContent, metadata);
         // const challenge = await Challenge.findById(chaId);
         // // const locationChallenge = challenge.location;
         // const resLocationChanllenge = await geocoder.geocode(locationChallenge);
