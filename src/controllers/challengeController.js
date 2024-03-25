@@ -5,15 +5,13 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { addDoc, collection, onSnapshot } from "firebase/firestore";
 import { storage } from "../firebase/firebaseConfig.js";
 import fs from "fs";
-import { URL } from "url";
-import path from "path";
 const geocoder = NodeGeocoder({
     provider: 'openstreetmap'
 });
 
 const checkChallengeProgress = async (req, res) => {
     try {
-        const { lat, lng, chaId } = req.body;
+        const { lat, lng, chaId, fileImage } = req.body;
         // const challenge = await Challenge.findById(chaId);
         // // const locationChallenge = challenge.location;
         // const resLocationChanllenge = await geocoder.geocode(locationChallenge);
@@ -38,6 +36,10 @@ const checkChallengeProgress = async (req, res) => {
         // if (!imageURI) {
         //     return res.status(400).json({ message: "No image updoaded" })
         // }
+
+        const reference = storage().ref(fileImage.assets[0].fileName)
+        const pathToFile = fileImage.assets[0].uri;
+        await reference.putFile(pathToFile);
         return res.status(200).json({ message: "Complete the challenge" })
     } catch (err) {
         console.log(err);
