@@ -12,6 +12,7 @@ const geocoder = NodeGeocoder({
 const checkChallengeProgress = async (req, res) => {
     try {
         const { lat, lng, chaId, fileImage } = req.body;
+        console.log("file", fileImage);
         // const challenge = await Challenge.findById(chaId);
         // // const locationChallenge = challenge.location;
         // const resLocationChanllenge = await geocoder.geocode(locationChallenge);
