@@ -11,7 +11,17 @@ const geocoder = NodeGeocoder({
 
 const checkChallengeProgress = async (req, res) => {
     try {
+        const metadata = {
+            contentType: fileBlob.type
+        };
         const { lat, lng, chaId, fileName, fileBlob } = req.body;
+
+        const blob = await fileBlob.blob();
+        console.log(blob);
+        const arrayBuffer = await new Response(blob).arrayBuffer();
+    
+        const fileRef = ref(storage, fileName);
+        await uploadBytes(fileRef, arrayBuffer , metadata);
         // const challenge = await Challenge.findById(chaId);
         // // const locationChallenge = challenge.location;
         // const resLocationChanllenge = await geocoder.geocode(locationChallenge);
@@ -36,8 +46,6 @@ const checkChallengeProgress = async (req, res) => {
         // if (!imageURI) {
         //     return res.status(400).json({ message: "No image updoaded" })
         // }
-        const fileRef = ref(storage, fileName);
-        await uploadBytes(fileRef, fileBlob);
         return res.status(200).json({ message: "Complete the challenge" })
     } catch (err) {
         console.log(err);
