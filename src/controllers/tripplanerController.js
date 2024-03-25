@@ -26,7 +26,7 @@ const createTrip = async (req, res) => {
             temperature: 1.0,
             topK: 30,
             topP: 0.7,
-            maxOutputTokens: 14348,
+            maxOutputTokens: 13348,
         };
         const safetySettings = [
             {
@@ -62,7 +62,8 @@ const createTrip = async (req, res) => {
         title:"biggest location",
         "activities": [
             {"challenge_summary": string,
-            "google_maps_address": MUST ADDRESS NOT URL(string), 
+            "google_maps_address": MUST ADDRESS NOT URL and exact location with challenge_summary(string), 
+            "name_location":(string),
             "latitude": (string), 
             "longitude":(string), 
             "level_of_difficult":number (from 1 to 100)}],
@@ -125,8 +126,8 @@ const saveTripPlanner = async (req, res) => {
             await tripday.save();
             const activities = dayData.activities || [];
             for (const challengeData of activities) {
-                let { challenge_summary, google_maps_address, level_of_difficult, latitude, longitude } = challengeData;
-                const challenge = new Challenge({ tripDayId: tripday._id, challengeSummary: challenge_summary, location: google_maps_address, points: level_of_difficult, latitude, longitude })
+                let { challenge_summary, google_maps_address, level_of_difficult, latitude, longitude, name_location } = challengeData;
+                const challenge = new Challenge({ tripDayId: tripday._id, challengeSummary: challenge_summary, location: google_maps_address, points: level_of_difficult, latitude, longitude, nameLocation: name_location })
                 await challenge.save();
                 const userChallengeProgress = new UserChallengProgress({ userId: userId, chaId: challenge._id })
                 await userChallengeProgress.save();
@@ -207,14 +208,40 @@ const deleteTrip = async (req, res) => {
         }
         return res.status(200).json({ message: "Trip deleted successfully" });
     } catch (error) {
-
+        console.log(err);
+        return res.status(500).send("Internal Server Error")
     }
 }
+
+const getLocation = async (req, res) => {
+    try {
+        const { tripId } = req.body;
+        const result = [];
+        const tripDays = await TripDay.find({ tripId: tripId });
+        for (const tripDay of tripDays) {
+            const challenge = await Challenge.findOne({ tripDayId: tripDay._id });
+            if (challenge) {
+                result.push({
+                    day: tripDay.day,
+                    location: challenge.location,
+                    latitude: challenge.latitude,
+                    longitude: challenge.longitude
+                });
+            }
+        }
+        return res.status(200).json({ message: "Get location successfully", result });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send("Internal Server Error")
+    }
+}
+
 
 export {
     createTrip,
     saveTripPlanner,
     getTrip,
     getDetailTrip,
-    deleteTrip
+    deleteTrip,
+    getLocation
 }
