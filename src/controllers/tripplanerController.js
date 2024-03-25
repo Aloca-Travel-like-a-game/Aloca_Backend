@@ -127,6 +127,7 @@ const saveTripPlanner = async (req, res) => {
             const activities = dayData.activities || [];
             for (const challengeData of activities) {
                 let { challenge_summary, google_maps_address, level_of_difficult, latitude, longitude, name_location } = challengeData;
+                console.log("d",name_location);
                 const challenge = new Challenge({ tripDayId: tripday._id, challengeSummary: challenge_summary, location: google_maps_address, points: level_of_difficult, latitude, longitude, nameLocation: name_location })
                 await challenge.save();
                 const userChallengeProgress = new UserChallengProgress({ userId: userId, chaId: challenge._id })
