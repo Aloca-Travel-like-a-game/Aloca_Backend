@@ -37,8 +37,8 @@ const checkChallengeProgress = async (req, res) => {
         // if (!imageURI) {
         //     return res.status(400).json({ message: "No image updoaded" })
         // }
-
-        const reference = storage().ref(fileImage.assets[0].fileName)
+        const fileName = fileImage.assets[0].fileName;
+        const reference = storage().ref(fileName)
         const pathToFile = fileImage.assets[0].uri;
         await reference.putFile(pathToFile);
         return res.status(200).json({ message: "Complete the challenge" })
