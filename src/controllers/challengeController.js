@@ -11,7 +11,7 @@ const geocoder = NodeGeocoder({
 
 const checkChallengeProgress = async (req, res) => {
     try {
-        const { lat, lng, chaId, fileImage } = req.body;
+        const { lat, lng, chaId, fileName, fileBlob } = req.body;
         console.log("file", fileImage);
         // const challenge = await Challenge.findById(chaId);
         // // const locationChallenge = challenge.location;
@@ -37,10 +37,8 @@ const checkChallengeProgress = async (req, res) => {
         // if (!imageURI) {
         //     return res.status(400).json({ message: "No image updoaded" })
         // }
-        const fileName = fileImage.assets[0].fileName;
         const fileRef = ref(storage, fileName);
-        const pathToFile = fileImage.assets[0].uri;
-        await uploadBytes(fileRef, pathToFile);
+        await uploadBytes(fileRef, fileBlob);
         return res.status(200).json({ message: "Complete the challenge" })
     } catch (err) {
         console.log(err);
