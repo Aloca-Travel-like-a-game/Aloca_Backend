@@ -12,7 +12,7 @@ const geocoder = NodeGeocoder({
 const checkChallengeProgress = async (req, res) => {
     try {
         const { lat, lng, chaId, fileName, fileBlob } = req.body;
-
+        console.log(fileBlob);
         const metadata = {
             contentType: fileBlob.type
         };
