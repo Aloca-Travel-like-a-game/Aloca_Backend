@@ -16,6 +16,22 @@ const checkChallengeProgress = async (req, res) => {
         if (distance > 250) {
             return res.status(200).json({ message: "Please complete the mission at the location provided", distance })
         }
+        return res.status(200).json({ message: "Complete the challenge", distance })
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+}
+
+const updateChallengeProgress = async (req, res) => {
+    try {
+        const { chaId, imageUrl } = req.body;
+        console.log(imageUrl);
+        const challenge = await Challenge.findOneAndUpdate(
+            { _id: chaId },
+            { imageUrl },
+            { new: true, projection: { _id: 1, points: 1 } }
+        );
         const challengePoints = challenge.points;
         const changeUserChallengeProgress = await UserChallengeProgress.findOneAndUpdate(
             { chaId: challenge._id },
@@ -33,5 +49,4 @@ const checkChallengeProgress = async (req, res) => {
         return res.status(500).json({ message: "Internal Server Error" });
     }
 }
-170923
-export { checkChallengeProgress }
+export { checkChallengeProgress, updateChallengeProgress }

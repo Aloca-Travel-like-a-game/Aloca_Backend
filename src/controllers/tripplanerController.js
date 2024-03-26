@@ -23,9 +23,9 @@ const createTrip = async (req, res) => {
         const genAI = new GoogleGenerativeAI(process.env.API_KEY_CHAT);
         const model = genAI.getGenerativeModel({ model: process.env.MODEL_NAME });
         const generationConfig = {
-            temperature: 1.0,
-            topK: 30,
-            topP: 0.7,
+            temperature: 1.5,
+            topK: 20,
+            topP: 0.5,
             maxOutputTokens: 13348,
         };
         const safetySettings = [
@@ -64,8 +64,8 @@ const createTrip = async (req, res) => {
             {"challenge_summary": string,
             "google_maps_address": MUST ADDRESS NOT URL and exact location with challenge_summary(string),
             "name_location":(string),
-            "latitude":(string) PLEASE is the google_maps_address latitude address, 
-            "longitude":(string) PLEASE is the google_maps_address longitude address, 
+            "latitude":(string), 
+            "longitude":(string), 
             "level_of_difficult":number (from 10 to 100)}],
         "transportCost": money(NUMBER)(MUST BE GREATER THAN 0),
         "foodCost": money(NUMBER)(MUST BE GREATER THAN 0),
