@@ -9,30 +9,14 @@ const checkChallengeProgress = async (req, res) => {
     try {
         const { lat, lng, chaId } = req.body;
         const challenge = await Challenge.findById(chaId);
-        const locationChallenge = challenge.location;
-        const resLocationChanllenge = await geocoder.geocode(locationChallenge);
-        console.log("res", resLocationChanllenge);
-        if (resLocationChanllenge && resLocationChanllenge.length > 0) {
-            const langtitude = resLocationChanllenge[0].latitude;
-            const longitude = resLocationChanllenge[0].longitude;
-            const distance = geolib.getDistance(
-                { latitude: lat, longitude: lng },
-                { latitude: langtitude, longitude: longitude }
-            )
-            if (distance > 80) {
-                return res.status(200).json({ message: "Please complete the mission at the location provided", distance })
-            }
-        }
-        else {
-            const challengeLatitude = challenge.latitude;
-            const challengeLongitude = challenge.longitude;
-            const distance = geolib.getDistance(
-                { latitude: lat, longitude: lng },
-                { latitude: challengeLatitude, longitude: challengeLongitude }
-            )
-            if (distance > 80) {
-                return res.status(200).json({ message: "Please complete the mission at the location provided", distance })
-            }
+        const challengeLatitude = challenge.latitude;
+        const challengeLongitude = challenge.longitude;
+        const distance = geolib.getDistance(
+            { latitude: lat, longitude: lng },
+            { latitude: challengeLatitude, longitude: challengeLongitude }
+        )
+        if (distance > 80) {
+            return res.status(200).json({ message: "Please complete the mission at the location provided", distance })
         }
         return res.status(200).json({ message: "Complete the challenge", distance })
     } catch (err) {
