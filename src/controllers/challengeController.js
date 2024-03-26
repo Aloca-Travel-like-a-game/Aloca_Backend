@@ -1,10 +1,6 @@
 import Challenge from "../models/challengeModel.js";
 import geolib from "geolib";
 import NodeGeocoder from 'node-geocoder';
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { addDoc, collection, onSnapshot } from "firebase/firestore";
-import fs from "fs";
-import { storage } from "../firebase/firebaseConfig.js";
 const geocoder = NodeGeocoder({
     provider: 'openstreetmap'
 });
@@ -22,15 +18,20 @@ const checkChallengeProgress = async (req, res) => {
                 { latitude: lat, longitude: lng },
                 { latitude: langtitude, longitude: longitude }
             )
+            if (distance > 80) {
+                return res.status(200).json({ message: "Please complete the mission at the location providedd", distance })
+            }
         }
-        const challengeLatitude = challenge.latitude;
-        const challengeLongitude = challenge.longitude;
-        const distance = geolib.getDistance(
-            { latitude: lat, longitude: lng },
-            { latitude: challengeLatitude, longitude: challengeLongitude }
-        )
-        if (distance > 80) {
-            return res.status(200).json({ message: "Please complete the mission at the location provided", distance })
+        else {
+            const challengeLatitude = challenge.latitude;
+            const challengeLongitude = challenge.longitude;
+            const distance = geolib.getDistance(
+                { latitude: lat, longitude: lng },
+                { latitude: challengeLatitude, longitude: challengeLongitude }
+            )
+            if (distance > 80) {
+                return res.status(200).json({ message: "Please complete the mission at the location provided", distance })
+            }
         }
         return res.status(200).json({ message: "Complete the challenge", distance })
     } catch (err) {
