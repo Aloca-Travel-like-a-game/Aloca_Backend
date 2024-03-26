@@ -43,7 +43,7 @@ const updateChallengeProgress = async (req, res) => {
             { $inc: { experience: challengePoints } },
             { new: true }
         );
-        return res.status(200).json({ message: "Complete the challenge", distance })
+        return res.status(200).json({ message: "Update Progress challenge Successfully" })
     } catch (err) {
         console.log(err);
         return res.status(500).json({ message: "Internal Server Error" });
