@@ -56,14 +56,14 @@ const createTrip = async (req, res) => {
         - Ngân sách: ${budget} 
         - Sở thích: ${interest}
         - Tôi hiện tại sống ở: ${userLocation}
-        BẮT BUỘC phải tạo ra ít nhất 2 plan và SỐ TIỀN TỔNG CHI PHÍ CỦA PLAN NÓ TRONG KHOẢNG ${budget} và có ĐẦY ĐỦ ${numberOfDay} ngày? Vui lòng cho ra tất cả trong chuỗi JSON format, với từ khóa là
+        BẮT BUỘC phải tạo ra ít nhất 2 plan và phạm vi tại ${location} và SỐ TIỀN TỔNG CHI PHÍ CỦA PLAN NÓ TRONG KHOẢNG ${budget} và có ĐẦY ĐỦ ${numberOfDay} ngày? Vui lòng cho ra tất cả trong chuỗi JSON format, với từ khóa là
         plannb:{
         "daynb": {
         title:"biggest location",
         "activities": [
             {"challenge_summary": string,
-            "google_maps_address": MUST ADDRESS NOT URL format of road, district, province(string),
             "name_location":(string),
+            "province":(string),
             "latitude":(string), 
             "longitude":(string), 
             "level_of_difficult":number (from 10 to 100)}],
