@@ -62,10 +62,10 @@ const createTrip = async (req, res) => {
         title:"biggest location",
         "activities": [
             {"challenge_summary": string,
-            "google_maps_address": MUST ADDRESS NOT URL and exact location with challenge_summary(string),  bắt buộc trong mỗi plan phải có một challenge ở địa điểm này 136 Tô Hiến Thành, Phước Mỹ, Sơn Trà, Đà Nẵng 550000, Việt Nam 
+            "google_maps_address": MUST ADDRESS NOT URL and exact location with challenge_summary(string),
             "name_location":(string),
-            "latitude": (string), 
-            "longitude":(string), 
+            "latitude":(string) PLEASE is the google_maps_address latitude address, 
+            "longitude":(string) PLEASE is the google_maps_address longitude address, 
             "level_of_difficult":number (from 1 to 100)}],
         "transportCost": money(NUMBER)(MUST BE GREATER THAN 0),
         "foodCost": money(NUMBER)(MUST BE GREATER THAN 0),

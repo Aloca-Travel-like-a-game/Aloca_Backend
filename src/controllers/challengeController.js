@@ -15,7 +15,7 @@ const checkChallengeProgress = async (req, res) => {
             { latitude: lat, longitude: lng },
             { latitude: challengeLatitude, longitude: challengeLongitude }
         )
-        if (distance > 80) {
+        if (distance > 200) {
             return res.status(200).json({ message: "Please complete the mission at the location provided", distance })
         }
         return res.status(200).json({ message: "Complete the challenge", distance })
