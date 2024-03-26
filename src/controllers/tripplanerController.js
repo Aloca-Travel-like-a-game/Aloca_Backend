@@ -216,7 +216,7 @@ const deleteTrip = async (req, res) => {
 
 const getLocation = async (req, res) => {
     try {
-        const { tripId } = req.body;
+        const { tripId } = req.params;
         const result = [];
         const tripDays = await TripDay.find({ tripId: tripId });
         for (const tripDay of tripDays) {

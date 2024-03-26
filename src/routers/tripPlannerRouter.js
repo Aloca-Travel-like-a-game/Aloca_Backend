@@ -9,6 +9,6 @@ router.post("/save-trip", checkAuthentication, saveTripPlanner)
 router.get("/get-trip", checkAuthentication, getTrip)
 router.get("/get-trip/:id", checkAuthentication, getDetailTrip)
 router.delete("/:id", checkAuthentication, deleteTrip)
-router.get("/location", checkAuthentication, getLocation)
+router.get("/location/:id", checkAuthentication, getLocation)
 
 export default router;
