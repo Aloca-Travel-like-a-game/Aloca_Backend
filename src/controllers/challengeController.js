@@ -11,6 +11,7 @@ const checkChallengeProgress = async (req, res) => {
         const challenge = await Challenge.findById(chaId);
         const locationChallenge = challenge.location;
         const resLocationChanllenge = await geocoder.geocode(locationChallenge);
+        console.log("res", resLocationChanllenge);
         if (resLocationChanllenge && resLocationChanllenge.length > 0) {
             const langtitude = resLocationChanllenge[0].latitude;
             const longitude = resLocationChanllenge[0].longitude;
@@ -19,7 +20,7 @@ const checkChallengeProgress = async (req, res) => {
                 { latitude: langtitude, longitude: longitude }
             )
             if (distance > 80) {
-                return res.status(200).json({ message: "Please complete the mission at the location providedd", distance })
+                return res.status(200).json({ message: "Please complete the mission at the location provided", distance })
             }
         }
         else {
