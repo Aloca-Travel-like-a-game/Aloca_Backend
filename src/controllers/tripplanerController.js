@@ -26,7 +26,7 @@ const createTrip = async (req, res) => {
             temperature: 1.5,
             topK: 20,
             topP: 0.5,
-            maxOutputTokens: 13348,
+            maxOutputTokens: 14348,
         };
         const safetySettings = [
             {
@@ -56,7 +56,7 @@ const createTrip = async (req, res) => {
         - Ngân sách: ${budget} 
         - Sở thích: ${interest}
         - Tôi hiện tại sống ở: ${userLocation}
-        BẮT BUỘC phải tạo ra ít nhất 2 plan và phạm vi tại ${location} và SỐ TIỀN TỔNG CHI PHÍ CỦA PLAN NÓ TRONG KHOẢNG ${budget} và có ĐẦY ĐỦ ${numberOfDay} ngày? Vui lòng cho ra tất cả trong chuỗi JSON format, với từ khóa là
+        BẮT BUỘC phải tạo ra ít nhất 2 plan TRONG PHẠM VI ${location} và SỐ TIỀN TỔNG CHI PHÍ CỦA PLAN NÓ TRONG KHOẢNG ${budget} và có ĐẦY ĐỦ ${numberOfDay} ngày? Vui lòng cho ra tất cả trong chuỗi JSON format, với từ khóa là
         plannb:{
         "daynb": {
         title:"biggest location",
@@ -64,8 +64,6 @@ const createTrip = async (req, res) => {
             {"challenge_summary": string,
             "name_location":(string),
             "province":(string),
-            "latitude":(string), 
-            "longitude":(string), 
             "level_of_difficult":number (from 10 to 100)}],
         "transportCost": money(NUMBER)(MUST BE GREATER THAN 0),
         "foodCost": money(NUMBER)(MUST BE GREATER THAN 0),
