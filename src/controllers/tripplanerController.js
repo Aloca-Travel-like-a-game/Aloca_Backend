@@ -62,7 +62,7 @@ const createTrip = async (req, res) => {
         title:"biggest location",
         "activities": [
             {"challenge_summary": string,
-            "google_maps_address": MUST ADDRESS NOT URL for format of road, district, province(string),
+            "google_maps_address": MUST ADDRESS NOT URL(string),
             "name_location":(string),
             "latitude":(string), 
             "longitude":(string), 
