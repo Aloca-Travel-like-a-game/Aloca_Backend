@@ -66,7 +66,7 @@ const createTrip = async (req, res) => {
             "name_location":(string),
             "latitude":(string) PLEASE is the google_maps_address latitude address, 
             "longitude":(string) PLEASE is the google_maps_address longitude address, 
-            "level_of_difficult":number (from 1 to 100)}],
+            "level_of_difficult":number (from 10 to 100)}],
         "transportCost": money(NUMBER)(MUST BE GREATER THAN 0),
         "foodCost": money(NUMBER)(MUST BE GREATER THAN 0),
         "otherCost":money(NUMBER)(MUST BE GREATER THAN 0),
