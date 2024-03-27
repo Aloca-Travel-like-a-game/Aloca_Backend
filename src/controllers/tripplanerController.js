@@ -122,7 +122,7 @@ const saveTripPlanner = async (req, res) => {
             await tripday.save();
             const activities = dayData.activities || [];
             for (const challengeData of activities) {
-                let { challenge_summary, google_maps_address, level_of_difficult, name_location, province } = challengeData;
+                let { challenge_summary, level_of_difficult, name_location, province } = challengeData;
                 const data = await getLocationFromNameLocation(name_location, province);
                 const location = data.location;
                 const latitude = data.latitude;

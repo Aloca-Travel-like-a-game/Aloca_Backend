@@ -15,7 +15,6 @@ const runChat = async (req, res) => {
         const travelKeywords = getTravelKeywords(message);
         let chatAi = await ChatAi.findOne({ userId, _id: idChat });
         let checkNewChat = false;
-        if (checkTravelRelated(message, travelKeywords)) {
             let history = null;
             if (!chatAi) {
                 const title = extractTitle(message);
@@ -81,9 +80,6 @@ const runChat = async (req, res) => {
             const responseAi = new Response({ chatAiId: chatAi._id, content: ChatResponse })
             await responseAi.save();
             return res.status(200).json({ message: "Send message successfully", data: { chatAi, ChatResponse } })
-        } else {
-            res.status(200).json({ message: "Xin lỗi, Ứng dụng của chúng tôi chỉ hỗ trợ tiếng Việt và các chủ đề liên quan đến du lịch", chatAi })
-        }
     }
     catch (err) {
         console.log(err);
