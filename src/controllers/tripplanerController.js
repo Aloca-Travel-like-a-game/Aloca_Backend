@@ -6,6 +6,7 @@ import TripDay from "../models/tripDayModel.js";
 import Tripplan from "../models/tripplannerModel.js";
 import Challenge from "../models/challengeModel.js";
 import UserChallengProgress from "../models/userChallengeProgressModel.js";
+import { getLocationFromNameLocation } from "../helper/getLocationFromNameLocation.js";
 configDotenv();
 
 const createTrip = async (req, res) => {
@@ -106,7 +107,6 @@ const saveTripPlanner = async (req, res) => {
         if (tripWithSameName) {
             return res.status(400).json({ message: "A trip with the same name already exists" })
         }
-        // const imageTripPlaceUrl = await getImagesFromLocation(location);
         const tripPlan = new Tripplan({ userId, startDate, endDate, location, nameTrip }) // imageUrl
         await tripPlan.save();
         for (const [dayKey, dayData] of Object.entries(jsonTrip)) {
@@ -114,19 +114,20 @@ const saveTripPlanner = async (req, res) => {
             const dayDate = new Date(startDate);
             dayDate.setDate(dayDate.getDate() + dayNumber);
             const dayOfWeek = getDayOfWeek(dayDate.getDay());
-            const { title, google_maps_address, transportCost, foodCost, otherCost } = dayData;
+            const { title, transportCost, foodCost, otherCost } = dayData;
             transportCostTotal += transportCost;
             foodCostTotal += foodCost;
             otherCostTotal += otherCost;
-
-            // const imageUrlLocation = await getImagesFromLocation(google_maps_address);
-            const tripday = new TripDay({ tripId: tripPlan._id, day: dayNumber, title, dayOfWeek, date: dayDate, transportCost, foodCost, otherCost, }); // imageUrlLocation
+            const tripday = new TripDay({ tripId: tripPlan._id, day: dayNumber, title, dayOfWeek, date: dayDate, transportCost, foodCost, otherCost }); // imageUrlLocation
             await tripday.save();
             const activities = dayData.activities || [];
             for (const challengeData of activities) {
-                let { challenge_summary, google_maps_address, level_of_difficult, latitude, longitude, name_location } = challengeData;
-                console.log("d", name_location);
-                const challenge = new Challenge({ tripDayId: tripday._id, challengeSummary: challenge_summary, location: google_maps_address, points: level_of_difficult, latitude, longitude, nameLocation: name_location })
+                let { challenge_summary, google_maps_address, level_of_difficult, name_location, province } = challengeData;
+                const data = await getLocationFromNameLocation(name_location, province);
+                const location = data.location;
+                const latitude = data.latitude;
+                const longitude = data.longitude;
+                const challenge = new Challenge({ tripDayId: tripday._id, challengeSummary: challenge_summary, location, points: level_of_difficult, latitude, longitude, nameLocation: name_location })
                 await challenge.save();
                 const userChallengeProgress = new UserChallengProgress({ userId: userId, chaId: challenge._id })
                 await userChallengeProgress.save();
