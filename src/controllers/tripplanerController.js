@@ -63,7 +63,7 @@ const createTrip = async (req, res) => {
         title:"biggest location",
         "activities": [
             {"challenge_summary": string,
-            "name_location":(string),
+            "name_location":(string) VIETNAMESE,
             "province":(string),
             "level_of_difficult":number (from 10 to 100)}],
         "transportCost": money(NUMBER)(MUST BE GREATER THAN 0),
